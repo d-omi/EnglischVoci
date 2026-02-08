@@ -478,7 +478,8 @@ function renderMap() {
       <button class="${state.direction === "de-en" ? "active" : ""}" data-dir="de-en">DE &rarr; EN</button>
       <button class="${state.direction === "en-de" ? "active" : ""}" data-dir="en-de">EN &rarr; DE</button>
     </div>
-    <div class="map-container">${svg}</div>`;
+    <div class="map-container">${svg}</div>
+    <div class="map-hint">Tippe auf den gelben Punkt!</div>`;
 
   // Question overlay
   if (state.showQuestion) {
@@ -507,17 +508,6 @@ function renderMap() {
       }
     });
   });
-
-  // Auto-open first question after a short delay
-  if (!state.showQuestion && state.currentIndex === 0 && state.answers.length === 0) {
-    setTimeout(() => {
-      if (state.screen === "quiz" && !state.showQuestion) {
-        state.showQuestion = true;
-        state.answered = false;
-        renderQuestionOverlay();
-      }
-    }, 600);
-  }
 }
 
 function renderQuestionOverlay() {
@@ -618,19 +608,10 @@ function advanceMap() {
     return;
   }
 
-  // Move fox and unlock next node
+  // Move fox and unlock next node - user clicks the pulsing node to continue
   state.nodeStates[state.currentIndex] = "current";
   state.foxTarget = state.currentIndex;
   render();
-
-  // Auto-open next question after fox walks
-  setTimeout(() => {
-    if (state.screen === "quiz" && !state.showQuestion) {
-      state.showQuestion = true;
-      state.answered = false;
-      renderQuestionOverlay();
-    }
-  }, 900);
 }
 
 /* ── Results ──────────────────────────────────────── */

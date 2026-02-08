@@ -257,6 +257,19 @@ body {
 .map-node.correct .node-glow { opacity: 0.4; }
 .map-node.wrong .node-glow { opacity: 0.3; }
 
+.map-hint {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--path-dark);
+  animation: hint-pulse 1.5s ease-in-out infinite;
+}
+@keyframes hint-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
 /* ── Question Modal ───────────────────────────────── */
 .question-overlay {
   position: fixed;

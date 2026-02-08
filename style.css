@@ -451,6 +451,18 @@ body {
   margin-top: -8px;
 }
 
+.example-sentence {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  font-style: italic;
+  background: #f4f4fa;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border-left: 3px solid var(--primary-light);
+  max-width: 340px;
+  text-align: left;
+}
+
 .quiz-actions {
   display: flex;
   gap: 10px;
@@ -539,15 +551,37 @@ body {
   flex-shrink: 0;
 }
 
-.result-word {
+.result-content {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.result-word {
+  font-weight: 700;
 }
 
 .result-answer {
   color: var(--text-light);
   font-weight: 400;
   font-size: 0.85rem;
+}
+
+.result-example {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--text-light);
+  opacity: 0.8;
+}
+
+.last-score {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-top: 4px;
 }
 
 .results-actions {

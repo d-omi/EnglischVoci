@@ -5,115 +5,107 @@ const VOCABULARY = {
     {
       portion: 1, day: "Montag", date: "12.01.2026",
       vocabulary: [
-        { english: "owl", german: "Eule" },
-        { english: "woodpecker", german: "Specht" },
-        { english: "beehive", german: "Bienenstock" },
-        { english: "butterfly", german: "Schmetterling" },
-        { english: "town", german: "Stadt" },
-        { english: "baker", german: "Bäcker/-in" },
-        { english: "butcher", german: "Metzger/-in" },
-        { english: "shop assistant", german: "Verkäufer/-in, Ladenangestellte/-r" }
-      ],
-      sentences: ["The owl is awake in the night.", "The bees live in the beehive."]
+        { english: "owl", german: "Eule", example: "The owl is awake in the night." },
+        { english: "woodpecker", german: "Specht", example: "The woodpecker is pecking at the tree." },
+        { english: "beehive", german: "Bienenstock", example: "The bees live in the beehive." },
+        { english: "butterfly", german: "Schmetterling", example: "The butterfly has colourful wings." },
+        { english: "town", german: "Stadt", example: "I live in a small town." },
+        { english: "baker", german: "Bäcker/-in", example: "The baker bakes fresh bread every morning." },
+        { english: "butcher", german: "Metzger/-in", example: "The butcher sells meat." },
+        { english: "shop assistant", german: "Verkäufer/-in, Ladenangestellte/-r", example: "The shop assistant helps the customers." }
+      ]
     },
     {
       portion: 2, day: "Montag", date: "19.01.2026",
       vocabulary: [
-        { english: "anthill", german: "Ameisenhaufen" },
-        { english: "hedgehog", german: "Igel" },
-        { english: "blackbird", german: "Amsel" },
-        { english: "squirrel", german: "Eichhörnchen" },
-        { english: "cross the street", german: "die Strasse überqueren" },
-        { english: "waiter, waitress", german: "Serviceangestellter, Serviceangestellte" },
-        { english: "police officer", german: "Polizeibeamter/-beamtin" },
-        { english: "street cleaner", german: "Strassenputzer/-in" }
-      ],
-      sentences: ["The hedgehog likes to hide under a pile of leaves.", "The blackbird is singing."]
+        { english: "anthill", german: "Ameisenhaufen", example: "Don't step on the anthill!" },
+        { english: "hedgehog", german: "Igel", example: "The hedgehog likes to hide under a pile of leaves." },
+        { english: "blackbird", german: "Amsel", example: "The blackbird is singing." },
+        { english: "squirrel", german: "Eichhörnchen", example: "The squirrel collects nuts for the winter." },
+        { english: "cross the street", german: "die Strasse überqueren", example: "Look left and right before you cross the street." },
+        { english: "waiter, waitress", german: "Serviceangestellter, Serviceangestellte", example: "The waiter brings the food to the table." },
+        { english: "police officer", german: "Polizeibeamter/-beamtin", example: "The police officer helps people." },
+        { english: "street cleaner", german: "Strassenputzer/-in", example: "The street cleaner keeps the roads clean." }
+      ]
     },
     {
       portion: 3, day: "Montag", date: "26.01.2026",
       vocabulary: [
-        { english: "mouse", german: "Maus" },
-        { english: "fox", german: "Fuchs" },
-        { english: "deer", german: "Hirsch, Reh" },
-        { english: "a pile of (leaves)", german: "ein Haufen (Blätter)" },
-        { english: "village", german: "Dorf" },
-        { english: "librarian", german: "Bibliothekar/-in" },
-        { english: "doctor", german: "Arzt/Ärztin" },
-        { english: "reporter", german: "Reporter/-in" }
-      ],
-      sentences: ["The mouse likes to eat cheese.", "The deer lives in the forest."]
+        { english: "mouse", german: "Maus", example: "The mouse likes to eat cheese." },
+        { english: "fox", german: "Fuchs", example: "The fox is clever and quick." },
+        { english: "deer", german: "Hirsch, Reh", example: "The deer lives in the forest." },
+        { english: "a pile of (leaves)", german: "ein Haufen (Blätter)", example: "There is a pile of leaves under the tree." },
+        { english: "village", german: "Dorf", example: "My grandmother lives in a small village." },
+        { english: "librarian", german: "Bibliothekar/-in", example: "The librarian helps me find a book." },
+        { english: "doctor", german: "Arzt/Ärztin", example: "The doctor works in a hospital." },
+        { english: "reporter", german: "Reporter/-in", example: "The reporter writes for the newspaper." }
+      ]
     },
     {
       portion: 4, day: "Montag", date: "02.02.2026",
       vocabulary: [
-        { english: "branch", german: "Ast, Zweig" },
-        { english: "log", german: "Baumstamm" },
-        { english: "tree trunk", german: "Baumstamm" },
-        { english: "root", german: "Wurzel" },
-        { english: "stick", german: "Zweig, Stock" },
-        { english: "work", german: "arbeiten" },
-        { english: "sell", german: "verkaufen" },
-        { english: "job", german: "Job, Arbeit, Beruf" }
-      ],
-      sentences: ["The bird is sitting on a branch.", "The frog is sitting on a log."]
+        { english: "branch", german: "Ast, Zweig", example: "The bird is sitting on a branch." },
+        { english: "log", german: "Baumstamm", example: "The frog is sitting on a log." },
+        { english: "tree trunk", german: "Baumstamm", example: "The tree trunk is very thick." },
+        { english: "root", german: "Wurzel", example: "The roots grow deep into the ground." },
+        { english: "stick", german: "Zweig, Stock", example: "The dog plays with a stick." },
+        { english: "work", german: "arbeiten", example: "My mum works in an office." },
+        { english: "sell", german: "verkaufen", example: "They sell fruit at the market." },
+        { english: "job", german: "Job, Arbeit, Beruf", example: "What is your dream job?" }
+      ]
     },
     {
       portion: 5, day: "Montag", date: "23.02.2026",
       vocabulary: [
-        { english: "board", german: "Brett" },
-        { english: "forest", german: "Wald" },
-        { english: "rubbish", german: "Abfall, Müll" },
-        { english: "catch", german: "fangen" },
-        { english: "fly", german: "fliegen" },
-        { english: "bakery", german: "Bäckerei" },
-        { english: "hospital", german: "Spital, Krankenhaus" },
-        { english: "library", german: "Bibliothek" }
-      ],
-      sentences: ["The fisher catches a fish.", "Don't leave your rubbish in the forest."]
+        { english: "board", german: "Brett", example: "Write the word on the board." },
+        { english: "forest", german: "Wald", example: "We go for a walk in the forest." },
+        { english: "rubbish", german: "Abfall, Müll", example: "Don't leave your rubbish in the forest." },
+        { english: "catch", german: "fangen", example: "The fisher catches a fish." },
+        { english: "fly", german: "fliegen", example: "Birds can fly high in the sky." },
+        { english: "bakery", german: "Bäckerei", example: "I buy bread at the bakery." },
+        { english: "hospital", german: "Spital, Krankenhaus", example: "The doctor works in the hospital." },
+        { english: "library", german: "Bibliothek", example: "I borrow books from the library." }
+      ]
     },
     {
       portion: 6, day: "Montag", date: "02.03.2026",
       vocabulary: [
-        { english: "hunt", german: "jagen" },
-        { english: "be awake", german: "wach sein" },
-        { english: "cut", german: "schneiden" },
-        { english: "climb", german: "klettern" },
-        { english: "nail", german: "nageln" },
-        { english: "cinema", german: "Kino" },
-        { english: "shop", german: "Laden" },
-        { english: "train station", german: "Bahnhof" }
-      ],
-      sentences: ["The fox is hunting a mouse.", "You can climb up a tree."]
+        { english: "hunt", german: "jagen", example: "The fox is hunting a mouse." },
+        { english: "be awake", german: "wach sein", example: "The owl is awake at night." },
+        { english: "cut", german: "schneiden", example: "Be careful when you cut with scissors." },
+        { english: "climb", german: "klettern", example: "You can climb up a tree." },
+        { english: "nail", german: "nageln", example: "He nails the board to the wall." },
+        { english: "cinema", german: "Kino", example: "We watch a film at the cinema." },
+        { english: "shop", german: "Laden", example: "I buy sweets at the shop." },
+        { english: "train station", german: "Bahnhof", example: "The train leaves from the train station." }
+      ]
     },
     {
       portion: 7, day: "Montag", date: "09.03.2026",
       vocabulary: [
-        { english: "Don't feed the animals!", german: "Tiere nicht füttern!" },
-        { english: "at night", german: "in der Nacht" },
-        { english: "during the day", german: "am Tag, tagsüber" },
-        { english: "bus terminal", german: "Busbahnhof" },
-        { english: "map", german: "Karte, Stadtplan" },
-        { english: "street", german: "Strasse" },
-        { english: "countryside", german: "Land, Landschaft" },
-        { english: "letter", german: "Brief" }
-      ],
-      sentences: ["The hedgehog is sleeping during the day.", "There are no buses at night."]
+        { english: "Don't feed the animals!", german: "Tiere nicht füttern!", example: "Don't feed the animals in the zoo!" },
+        { english: "at night", german: "in der Nacht", example: "The owl hunts at night." },
+        { english: "during the day", german: "am Tag, tagsüber", example: "The hedgehog is sleeping during the day." },
+        { english: "bus terminal", german: "Busbahnhof", example: "We wait at the bus terminal." },
+        { english: "map", german: "Karte, Stadtplan", example: "Look at the map to find the way." },
+        { english: "street", german: "Strasse", example: "Be careful when you cross the street." },
+        { english: "countryside", german: "Land, Landschaft", example: "There are many farms in the countryside." },
+        { english: "letter", german: "Brief", example: "I write a letter to my friend." }
+      ]
     },
     {
       portion: 8, day: "Montag", date: "16.03.2026",
       vocabulary: [
-        { english: "snail", german: "Schnecke" },
-        { english: "rabbit", german: "Kaninchen, Hase" },
-        { english: "spiderweb", german: "Spinnennetz" },
-        { english: "live", german: "leben, wohnen" },
-        { english: "noisy", german: "laut, lärmend" },
-        { english: "quiet", german: "leise, ruhig, still" },
-        { english: "in front of the building", german: "vor dem Gebäude" },
-        { english: "turn left/right", german: "nach links/rechts gehen" },
-        { english: "walk straight on", german: "geradeaus gehen" }
-      ],
-      sentences: ["A snail is slow.", "Rabbits like to eat carrots."]
+        { english: "snail", german: "Schnecke", example: "A snail is slow." },
+        { english: "rabbit", german: "Kaninchen, Hase", example: "Rabbits like to eat carrots." },
+        { english: "spiderweb", german: "Spinnennetz", example: "The spider sits in the spiderweb." },
+        { english: "live", german: "leben, wohnen", example: "I live in a house near the school." },
+        { english: "noisy", german: "laut, lärmend", example: "The city is very noisy." },
+        { english: "quiet", german: "leise, ruhig, still", example: "The library is a quiet place." },
+        { english: "in front of the building", german: "vor dem Gebäude", example: "The bus stops in front of the building." },
+        { english: "turn left/right", german: "nach links/rechts gehen", example: "Turn left at the corner." },
+        { english: "walk straight on", german: "geradeaus gehen", example: "Walk straight on for two minutes." }
+      ]
     }
   ]
 };
@@ -124,14 +116,14 @@ const STORAGE_PREFIX = "vociQuiz_";
 
 /* ─── State ───────────────────────────────────────────────────── */
 let state = {
-  screen: "welcome",      // welcome | portions | quiz | results
+  screen: "welcome",
   currentUser: null,
   selectedPortion: null,
-  direction: "de-en",      // de-en = show German, type English
+  direction: "de-en",
   quizWords: [],
   currentIndex: 0,
   answered: false,
-  answers: [],             // { word, correct, userAnswer, correctAnswer }
+  answers: [],
 };
 
 /* ─── LocalStorage helpers ────────────────────────────────────── */
@@ -149,6 +141,25 @@ function getProgress(user) {
 
 function saveProgress(user, progress) {
   localStorage.setItem(STORAGE_PREFIX + "progress_" + user, JSON.stringify(progress));
+}
+
+function getScores(user) {
+  return JSON.parse(localStorage.getItem(STORAGE_PREFIX + "scores_" + user) || "{}");
+}
+
+function saveScores(user, scores) {
+  localStorage.setItem(STORAGE_PREFIX + "scores_" + user, JSON.stringify(scores));
+}
+
+function saveQuizScore(user, portionIndex, correct, total) {
+  const scores = getScores(user);
+  scores[portionIndex] = { correct, total, date: new Date().toLocaleDateString("de-CH") };
+  saveScores(user, scores);
+}
+
+function getQuizScore(user, portionIndex) {
+  const scores = getScores(user);
+  return scores[portionIndex] || null;
 }
 
 function getTermStreak(user, portionIndex, termKey) {
@@ -193,31 +204,22 @@ function normalize(str) {
 
 function getAcceptableAnswers(answerStr) {
   const answers = new Set();
-
-  // Split by comma
   const parts = answerStr.split(",").map(s => s.trim());
   for (const part of parts) {
     answers.add(normalize(part));
-
-    // Handle parenthetical content: "ein Haufen (Blätter)" → also accept "ein haufen"
     const withoutParen = part.replace(/\s*\(.*?\)\s*/g, " ").trim();
     if (withoutParen) answers.add(normalize(withoutParen));
-
-    // Handle /-in pattern: "Bäcker/-in" → "Bäcker", "Bäckerin"
     const slashMatch = part.match(/^(.+?)\/-(.+)$/);
     if (slashMatch) {
       answers.add(normalize(slashMatch[1]));
       answers.add(normalize(slashMatch[1] + slashMatch[2]));
     }
-
-    // Handle / pattern (not /-): "Arzt/Ärztin" → "Arzt", "Ärztin"
     if (part.includes("/") && !part.includes("/-")) {
       for (const sub of part.split("/")) {
         answers.add(normalize(sub));
       }
     }
   }
-
   return [...answers].filter(a => a.length > 0);
 }
 
@@ -241,6 +243,9 @@ function shuffle(arr) {
 const $app = document.getElementById("app");
 
 function render() {
+  if (state.currentUser) {
+    localStorage.setItem(STORAGE_PREFIX + "lastUser", state.currentUser);
+  }
   switch (state.screen) {
     case "welcome":   renderWelcome(); break;
     case "portions":  renderPortions(); break;
@@ -255,9 +260,9 @@ function renderWelcome() {
   let savedUsersHtml = "";
   if (users.length > 0) {
     const items = users.map(u => `
-      <div class="user-item" data-user="${esc(u)}">
-        <span class="name">${esc(u)}</span>
-        <span class="arrow">&rarr;</span>
+      <div class="user-item">
+        <span class="name" data-user="${esc(u)}">${esc(u)}</span>
+        <button class="delete-user" data-del="${esc(u)}" title="Profil löschen">&times;</button>
       </div>
     `).join("");
     savedUsersHtml = `
@@ -292,8 +297,22 @@ function renderWelcome() {
     if (e.key === "Enter") loginUser(input.value);
   });
 
-  document.querySelectorAll(".user-item").forEach(el => {
+  document.querySelectorAll(".user-item .name").forEach(el => {
     el.addEventListener("click", () => loginUser(el.dataset.user));
+  });
+
+  document.querySelectorAll(".delete-user").forEach(el => {
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const name = el.dataset.del;
+      if (confirm(`Profil "${name}" wirklich löschen?`)) {
+        const users = getUsers().filter(u => u !== name);
+        saveUsers(users);
+        localStorage.removeItem(STORAGE_PREFIX + "progress_" + name);
+        localStorage.removeItem(STORAGE_PREFIX + "scores_" + name);
+        render();
+      }
+    });
   });
 }
 
@@ -316,6 +335,11 @@ function renderPortions() {
     const { learned, total } = getPortionProgress(state.currentUser, i);
     const pct = Math.round((learned / total) * 100);
     const isComplete = learned === total;
+    const lastScore = getQuizScore(state.currentUser, i);
+    let scoreHtml = "";
+    if (lastScore) {
+      scoreHtml = `<span class="last-score">Letztes Quiz: ${lastScore.correct}/${lastScore.total}</span>`;
+    }
     return `
       <div class="card portion-card animate-pop" data-index="${i}" style="animation-delay: ${i * 0.04}s">
         <div class="portion-num${isComplete ? " complete" : ""}">${p.portion}</div>
@@ -328,6 +352,7 @@ function renderPortions() {
             </div>
             <span class="progress-text">${learned}/${total}</span>
           </div>
+          ${scoreHtml}
         </div>
       </div>
     `;
@@ -379,9 +404,8 @@ function renderQuiz() {
 
   const isDeEn = state.direction === "de-en";
   const prompt = isDeEn ? word.german : word.english;
-  const dirLabel = isDeEn ? "Deutsch → English" : "English → Deutsch";
+  const dirLabel = isDeEn ? "Deutsch \u2192 English" : "English \u2192 Deutsch";
 
-  // Streak dots for this term
   const termKey = word.english.toLowerCase();
   const streak = getTermStreak(state.currentUser, state.selectedPortion, termKey);
   const dots = Array.from({ length: STREAK_GOAL }, (_, i) =>
@@ -395,13 +419,17 @@ function renderQuiz() {
   if (state.answered) {
     const last = state.answers[state.answers.length - 1];
     if (last.correct) {
-      feedbackHtml = `<div class="feedback correct animate-bounce">Richtig!</div>`;
+      feedbackHtml = `
+        <div class="feedback correct animate-bounce">Richtig!</div>
+        <div class="example-sentence">${esc(word.example)}</div>
+      `;
       inputExtra = "correct";
     } else {
       const correctDisplay = isDeEn ? word.english : word.german;
       feedbackHtml = `
         <div class="feedback wrong animate-shake">Falsch!</div>
         <div class="correct-answer-display">Richtig: <strong>${esc(correctDisplay)}</strong></div>
+        <div class="example-sentence">${esc(word.example)}</div>
       `;
       inputExtra = "wrong";
     }
@@ -445,13 +473,11 @@ function renderQuiz() {
     </div>
   `;
 
-  // Restore user's answer if already answered
   if (state.answered) {
     const last = state.answers[state.answers.length - 1];
     document.getElementById("quiz-input").value = last.userAnswer;
   }
 
-  // Events
   document.getElementById("quiz-back").addEventListener("click", () => {
     state.screen = "portions";
     render();
@@ -473,7 +499,6 @@ function renderQuiz() {
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter") submitAnswer(input.value);
     });
-    // Focus the input
     setTimeout(() => input.focus(), 50);
   } else {
     document.getElementById("next-btn").addEventListener("click", nextWord);
@@ -489,12 +514,7 @@ function submitAnswer(userInput) {
   const termKey = word.english.toLowerCase();
 
   state.answered = true;
-  state.answers.push({
-    word,
-    correct,
-    userAnswer: userInput,
-    correctAnswer: correctField
-  });
+  state.answers.push({ word, correct, userAnswer: userInput, correctAnswer: correctField });
 
   updateTermStreak(state.currentUser, state.selectedPortion, termKey, correct);
   render();
@@ -504,6 +524,9 @@ function nextWord() {
   state.currentIndex++;
   state.answered = false;
   if (state.currentIndex >= state.quizWords.length) {
+    // Save quiz score
+    const correctCount = state.answers.filter(a => a.correct).length;
+    saveQuizScore(state.currentUser, state.selectedPortion, correctCount, state.answers.length);
     state.screen = "results";
   }
   render();
@@ -516,12 +539,13 @@ function renderResults() {
   const total = state.answers.length;
   const pct = Math.round((correctCount / total) * 100);
 
-  // Stars based on percentage
-  let stars = "";
   const starCount = pct >= 90 ? 3 : pct >= 60 ? 2 : pct >= 30 ? 1 : 0;
+  let stars = "";
   for (let i = 0; i < 3; i++) {
     stars += i < starCount ? "\u2B50" : "\u2606";
   }
+
+  const { learned, total: portionTotal } = getPortionProgress(state.currentUser, state.selectedPortion);
 
   const items = state.answers.map(a => {
     const cls = a.correct ? "correct" : "wrong";
@@ -530,18 +554,18 @@ function renderResults() {
     const shown = isDeEn ? a.word.german : a.word.english;
     const answerDisplay = a.correct
       ? esc(a.userAnswer)
-      : `<s>${esc(a.userAnswer || "–")}</s> &rarr; ${esc(a.correctAnswer)}`;
+      : `<s>${esc(a.userAnswer || "\u2013")}</s> \u2192 ${esc(a.correctAnswer)}`;
     return `
       <div class="result-item ${cls}">
         <span class="result-icon">${icon}</span>
-        <span class="result-word">${esc(shown)}</span>
-        <span class="result-answer">${answerDisplay}</span>
+        <div class="result-content">
+          <span class="result-word">${esc(shown)}</span>
+          <span class="result-answer">${answerDisplay}</span>
+          <span class="result-example">${esc(a.word.example)}</span>
+        </div>
       </div>
     `;
   }).join("");
-
-  // Updated portion progress
-  const { learned, total: portionTotal } = getPortionProgress(state.currentUser, state.selectedPortion);
 
   $app.innerHTML = `
     <div class="app-header">
@@ -582,7 +606,6 @@ function esc(str) {
 
 /* ─── Init ────────────────────────────────────────────────────── */
 function init() {
-  // Check if there's a saved current user
   const lastUser = localStorage.getItem(STORAGE_PREFIX + "lastUser");
   if (lastUser && getUsers().includes(lastUser)) {
     state.currentUser = lastUser;
@@ -590,14 +613,5 @@ function init() {
   }
   render();
 }
-
-// Save current user on each render
-const originalRender = render;
-render = function () {
-  if (state.currentUser) {
-    localStorage.setItem(STORAGE_PREFIX + "lastUser", state.currentUser);
-  }
-  originalRender();
-};
 
 init();

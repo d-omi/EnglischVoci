@@ -6,18 +6,14 @@
       "day": "Montag",
       "date": "2026-01-12",
       "vocabulary": [
-        { "english": "owl", "german": "Eule" },
-        { "english": "woodpecker", "german": "Specht" },
-        { "english": "beehive", "german": "Bienenstock" },
-        { "english": "butterfly", "german": "Schmetterling" },
-        { "english": "town", "german": "Stadt" },
-        { "english": "baker", "german": "Bäcker/-in" },
-        { "english": "butcher", "german": "Metzger/-in" },
-        { "english": "shop assistant", "german": "Verkäufer/-in, Ladenangestellte/-r" }
-      ],
-      "sentences": [
-        "The owl is awake in the night.",
-        "The bees live in the beehive."
+        { "english": "owl", "german": "Eule", "example": "The owl is awake in the night." },
+        { "english": "woodpecker", "german": "Specht", "example": "The woodpecker is pecking at the tree." },
+        { "english": "beehive", "german": "Bienenstock", "example": "The bees live in the beehive." },
+        { "english": "butterfly", "german": "Schmetterling", "example": "The butterfly has colourful wings." },
+        { "english": "town", "german": "Stadt", "example": "I live in a small town." },
+        { "english": "baker", "german": "Bäcker/-in", "example": "The baker bakes fresh bread every morning." },
+        { "english": "butcher", "german": "Metzger/-in", "example": "The butcher sells meat." },
+        { "english": "shop assistant", "german": "Verkäufer/-in, Ladenangestellte/-r", "example": "The shop assistant helps the customers." }
       ]
     },
     {
@@ -25,18 +21,14 @@
       "day": "Montag",
       "date": "2026-01-19",
       "vocabulary": [
-        { "english": "anthill", "german": "Ameisenhaufen" },
-        { "english": "hedgehog", "german": "Igel" },
-        { "english": "blackbird", "german": "Amsel" },
-        { "english": "squirrel", "german": "Eichhörnchen" },
-        { "english": "cross the street", "german": "die Strasse überqueren" },
-        { "english": "waiter, waitress", "german": "Serviceangestellter, Serviceangestellte" },
-        { "english": "police officer", "german": "Polizeibeamter/-beamtin" },
-        { "english": "street cleaner", "german": "Strassenputzer/-in" }
-      ],
-      "sentences": [
-        "The hedgehog likes to hide under a pile of leaves.",
-        "The blackbird is singing."
+        { "english": "anthill", "german": "Ameisenhaufen", "example": "Don't step on the anthill!" },
+        { "english": "hedgehog", "german": "Igel", "example": "The hedgehog likes to hide under a pile of leaves." },
+        { "english": "blackbird", "german": "Amsel", "example": "The blackbird is singing." },
+        { "english": "squirrel", "german": "Eichhörnchen", "example": "The squirrel collects nuts for the winter." },
+        { "english": "cross the street", "german": "die Strasse überqueren", "example": "Look left and right before you cross the street." },
+        { "english": "waiter, waitress", "german": "Serviceangestellter, Serviceangestellte", "example": "The waiter brings the food to the table." },
+        { "english": "police officer", "german": "Polizeibeamter/-beamtin", "example": "The police officer helps people." },
+        { "english": "street cleaner", "german": "Strassenputzer/-in", "example": "The street cleaner keeps the roads clean." }
       ]
     },
     {
@@ -44,18 +36,14 @@
       "day": "Montag",
       "date": "2026-01-26",
       "vocabulary": [
-        { "english": "mouse (pl. mice)", "german": "Maus" },
-        { "english": "fox (pl. foxes)", "german": "Fuchs" },
-        { "english": "deer (pl. deer)", "german": "Hirsch, Reh" },
-        { "english": "a pile of (leaves)", "german": "ein Haufen (Blätter)" },
-        { "english": "village", "german": "Dorf" },
-        { "english": "librarian", "german": "Bibliothekar/-in" },
-        { "english": "doctor", "german": "Arzt/Ärztin" },
-        { "english": "reporter", "german": "Reporter/-in" }
-      ],
-      "sentences": [
-        "The mouse likes to eat cheese.",
-        "The deer lives in the forest."
+        { "english": "mouse (pl. mice)", "german": "Maus", "example": "The mouse likes to eat cheese." },
+        { "english": "fox (pl. foxes)", "german": "Fuchs", "example": "The fox is clever and quick." },
+        { "english": "deer (pl. deer)", "german": "Hirsch, Reh", "example": "The deer lives in the forest." },
+        { "english": "a pile of (leaves)", "german": "ein Haufen (Blätter)", "example": "There is a pile of leaves under the tree." },
+        { "english": "village", "german": "Dorf", "example": "My grandmother lives in a small village." },
+        { "english": "librarian", "german": "Bibliothekar/-in", "example": "The librarian helps me find a book." },
+        { "english": "doctor", "german": "Arzt/Ärztin", "example": "The doctor works in a hospital." },
+        { "english": "reporter", "german": "Reporter/-in", "example": "The reporter writes for the newspaper." }
       ]
     },
     {
@@ -63,18 +51,14 @@
       "day": "Montag",
       "date": "2026-02-02",
       "vocabulary": [
-        { "english": "branch", "german": "Ast, Zweig" },
-        { "english": "log", "german": "Baumstamm (eines gefällten Baums)" },
-        { "english": "tree trunk", "german": "Baumstamm (eines lebenden Baums)" },
-        { "english": "root", "german": "Wurzel" },
-        { "english": "stick", "german": "Zweig, Stock" },
-        { "english": "work", "german": "arbeiten" },
-        { "english": "sell", "german": "verkaufen" },
-        { "english": "job", "german": "Job, Arbeit, Beruf" }
-      ],
-      "sentences": [
-        "The bird is sitting on a branch.",
-        "The frog is sitting on a log."
+        { "english": "branch", "german": "Ast, Zweig", "example": "The bird is sitting on a branch." },
+        { "english": "log", "german": "Baumstamm (eines gefällten Baums)", "example": "The frog is sitting on a log." },
+        { "english": "tree trunk", "german": "Baumstamm (eines lebenden Baums)", "example": "The tree trunk is very thick." },
+        { "english": "root", "german": "Wurzel", "example": "The roots grow deep into the ground." },
+        { "english": "stick", "german": "Zweig, Stock", "example": "The dog plays with a stick." },
+        { "english": "work", "german": "arbeiten", "example": "My mum works in an office." },
+        { "english": "sell", "german": "verkaufen", "example": "They sell fruit at the market." },
+        { "english": "job", "german": "Job, Arbeit, Beruf", "example": "What is your dream job?" }
       ]
     },
     {
@@ -82,18 +66,14 @@
       "day": "Montag",
       "date": "2026-02-23",
       "vocabulary": [
-        { "english": "board", "german": "Brett" },
-        { "english": "forest", "german": "Wald" },
-        { "english": "rubbish", "german": "Abfall, Müll" },
-        { "english": "catch", "german": "fangen" },
-        { "english": "fly", "german": "fliegen" },
-        { "english": "bakery", "german": "Bäckerei" },
-        { "english": "hospital", "german": "Spital, Krankenhaus" },
-        { "english": "library", "german": "Bibliothek" }
-      ],
-      "sentences": [
-        "The fisher catches a fish.",
-        "Don't leave your rubbish in the forest."
+        { "english": "board", "german": "Brett", "example": "Write the word on the board." },
+        { "english": "forest", "german": "Wald", "example": "We go for a walk in the forest." },
+        { "english": "rubbish", "german": "Abfall, Müll", "example": "Don't leave your rubbish in the forest." },
+        { "english": "catch", "german": "fangen", "example": "The fisher catches a fish." },
+        { "english": "fly", "german": "fliegen", "example": "Birds can fly high in the sky." },
+        { "english": "bakery", "german": "Bäckerei", "example": "I buy bread at the bakery." },
+        { "english": "hospital", "german": "Spital, Krankenhaus", "example": "The doctor works in the hospital." },
+        { "english": "library", "german": "Bibliothek", "example": "I borrow books from the library." }
       ]
     },
     {
@@ -101,18 +81,14 @@
       "day": "Montag",
       "date": "2026-03-02",
       "vocabulary": [
-        { "english": "hunt", "german": "jagen" },
-        { "english": "be awake", "german": "wach sein" },
-        { "english": "cut", "german": "schneiden" },
-        { "english": "climb", "german": "klettern" },
-        { "english": "nail", "german": "nageln" },
-        { "english": "cinema", "german": "Kino" },
-        { "english": "shop", "german": "Laden" },
-        { "english": "train station", "german": "Bahnhof" }
-      ],
-      "sentences": [
-        "The fox is hunting a mouse.",
-        "You can climb up a tree."
+        { "english": "hunt", "german": "jagen", "example": "The fox is hunting a mouse." },
+        { "english": "be awake", "german": "wach sein", "example": "The owl is awake at night." },
+        { "english": "cut", "german": "schneiden", "example": "Be careful when you cut with scissors." },
+        { "english": "climb", "german": "klettern", "example": "You can climb up a tree." },
+        { "english": "nail", "german": "nageln", "example": "He nails the board to the wall." },
+        { "english": "cinema", "german": "Kino", "example": "We watch a film at the cinema." },
+        { "english": "shop", "german": "Laden", "example": "I buy sweets at the shop." },
+        { "english": "train station", "german": "Bahnhof", "example": "The train leaves from the train station." }
       ]
     },
     {
@@ -120,18 +96,14 @@
       "day": "Montag",
       "date": "2026-03-09",
       "vocabulary": [
-        { "english": "Don't feed the animals!", "german": "Tiere nicht füttern! Tiere füttern verboten!" },
-        { "english": "at night", "german": "in der Nacht" },
-        { "english": "during the day", "german": "am Tag, tagsüber, während des Tages" },
-        { "english": "bus terminal", "german": "Busbahnhof" },
-        { "english": "map", "german": "(Land-)Karte, Stadtplan" },
-        { "english": "street", "german": "Strasse" },
-        { "english": "countryside", "german": "Land, Landschaft" },
-        { "english": "letter", "german": "Brief" }
-      ],
-      "sentences": [
-        "The hedgehog is sleeping during the day.",
-        "There are no buses at night."
+        { "english": "Don't feed the animals!", "german": "Tiere nicht füttern! Tiere füttern verboten!", "example": "Don't feed the animals in the zoo!" },
+        { "english": "at night", "german": "in der Nacht", "example": "The owl hunts at night." },
+        { "english": "during the day", "german": "am Tag, tagsüber, während des Tages", "example": "The hedgehog is sleeping during the day." },
+        { "english": "bus terminal", "german": "Busbahnhof", "example": "We wait at the bus terminal." },
+        { "english": "map", "german": "(Land-)Karte, Stadtplan", "example": "Look at the map to find the way." },
+        { "english": "street", "german": "Strasse", "example": "Be careful when you cross the street." },
+        { "english": "countryside", "german": "Land, Landschaft", "example": "There are many farms in the countryside." },
+        { "english": "letter", "german": "Brief", "example": "I write a letter to my friend." }
       ]
     },
     {
@@ -139,19 +111,15 @@
       "day": "Montag",
       "date": "2026-03-16",
       "vocabulary": [
-        { "english": "snail", "german": "Schnecke" },
-        { "english": "rabbit", "german": "Kaninchen, Hase" },
-        { "english": "spiderweb", "german": "Spinnennetz" },
-        { "english": "live", "german": "leben, wohnen" },
-        { "english": "noisy", "german": "laut, lärmend" },
-        { "english": "quiet", "german": "leise, ruhig, still" },
-        { "english": "in front of the building", "german": "vor dem Gebäude" },
-        { "english": "turn left/right", "german": "nach links/rechts gehen" },
-        { "english": "walk straight on", "german": "geradeaus gehen" }
-      ],
-      "sentences": [
-        "A snail is slow.",
-        "Rabbits like to eat carrots."
+        { "english": "snail", "german": "Schnecke", "example": "A snail is slow." },
+        { "english": "rabbit", "german": "Kaninchen, Hase", "example": "Rabbits like to eat carrots." },
+        { "english": "spiderweb", "german": "Spinnennetz", "example": "The spider sits in the spiderweb." },
+        { "english": "live", "german": "leben, wohnen", "example": "I live in a house near the school." },
+        { "english": "noisy", "german": "laut, lärmend", "example": "The city is very noisy." },
+        { "english": "quiet", "german": "leise, ruhig, still", "example": "The library is a quiet place." },
+        { "english": "in front of the building", "german": "vor dem Gebäude", "example": "The bus stops in front of the building." },
+        { "english": "turn left/right", "german": "nach links/rechts gehen", "example": "Turn left at the corner." },
+        { "english": "walk straight on", "german": "geradeaus gehen", "example": "Walk straight on for two minutes." }
       ]
     }
   ]

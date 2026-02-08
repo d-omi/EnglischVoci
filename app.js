@@ -151,41 +151,43 @@ function saveScores(user, scores) {
   localStorage.setItem(STORAGE_PREFIX + "scores_" + user, JSON.stringify(scores));
 }
 
-function saveQuizScore(user, portionIndex, correct, total) {
+function saveQuizScore(user, portionIndex, direction, correct, total) {
   const scores = getScores(user);
-  scores[portionIndex] = { correct, total, date: new Date().toLocaleDateString("de-CH") };
+  if (!scores[portionIndex]) scores[portionIndex] = {};
+  scores[portionIndex][direction] = { correct, total, date: new Date().toLocaleDateString("de-CH") };
   saveScores(user, scores);
 }
 
-function getQuizScore(user, portionIndex) {
+function getQuizScore(user, portionIndex, direction) {
   const scores = getScores(user);
-  return scores[portionIndex] || null;
+  if (!scores[portionIndex]) return null;
+  return scores[portionIndex][direction] || null;
 }
 
-function getTermStreak(user, portionIndex, termKey) {
+function getTermStreak(user, portionIndex, termKey, direction) {
   const progress = getProgress(user);
-  const key = "p" + portionIndex;
-  return (progress[key] && progress[key][termKey]) ? progress[key][termKey].streak : 0;
+  const fullKey = "p" + portionIndex + "_" + direction;
+  return (progress[fullKey] && progress[fullKey][termKey]) ? progress[fullKey][termKey].streak : 0;
 }
 
-function updateTermStreak(user, portionIndex, termKey, correct) {
+function updateTermStreak(user, portionIndex, termKey, direction, correct) {
   const progress = getProgress(user);
-  const key = "p" + portionIndex;
-  if (!progress[key]) progress[key] = {};
-  if (!progress[key][termKey]) progress[key][termKey] = { streak: 0 };
+  const fullKey = "p" + portionIndex + "_" + direction;
+  if (!progress[fullKey]) progress[fullKey] = {};
+  if (!progress[fullKey][termKey]) progress[fullKey][termKey] = { streak: 0 };
   if (correct) {
-    progress[key][termKey].streak = Math.min(progress[key][termKey].streak + 1, STREAK_GOAL);
+    progress[fullKey][termKey].streak = Math.min(progress[fullKey][termKey].streak + 1, STREAK_GOAL);
   } else {
-    progress[key][termKey].streak = 0;
+    progress[fullKey][termKey].streak = 0;
   }
   saveProgress(user, progress);
 }
 
-function getPortionProgress(user, portionIndex) {
+function getPortionProgress(user, portionIndex, direction) {
   const portion = VOCABULARY.portions[portionIndex];
   const progress = getProgress(user);
-  const key = "p" + portionIndex;
-  const data = progress[key] || {};
+  const fullKey = "p" + portionIndex + "_" + direction;
+  const data = progress[fullKey] || {};
   let learned = 0;
   const total = portion.vocabulary.length;
   for (const term of portion.vocabulary) {
@@ -332,27 +334,36 @@ function loginUser(name) {
 /* ── Portions ─────────────────────────────────────── */
 function renderPortions() {
   const cards = VOCABULARY.portions.map((p, i) => {
-    const { learned, total } = getPortionProgress(state.currentUser, i);
-    const pct = Math.round((learned / total) * 100);
-    const isComplete = learned === total;
-    const lastScore = getQuizScore(state.currentUser, i);
-    let scoreHtml = "";
-    if (lastScore) {
-      scoreHtml = `<span class="last-score">Letztes Quiz: ${lastScore.correct}/${lastScore.total}</span>`;
+    const deEn = getPortionProgress(state.currentUser, i, "de-en");
+    const enDe = getPortionProgress(state.currentUser, i, "en-de");
+    const totalLearned = deEn.learned + enDe.learned;
+    const totalAll = deEn.total + enDe.total;
+    const isComplete = totalLearned === totalAll;
+
+    const scoreDe = getQuizScore(state.currentUser, i, "de-en");
+    const scoreEn = getQuizScore(state.currentUser, i, "en-de");
+
+    function progressRow(label, learned, total, score) {
+      const pct = Math.round((learned / total) * 100);
+      const done = learned === total;
+      const scoreText = score ? `<span class="last-score">${score.correct}/${score.total}</span>` : "";
+      return `
+        <div class="dir-row">
+          <span class="dir-label">${label}</span>
+          <div class="progress-bar"><div class="progress-fill${done ? " complete" : ""}" style="width:${pct}%"></div></div>
+          <span class="progress-text">${learned}/${total}</span>
+          ${scoreText}
+        </div>`;
     }
+
     return `
       <div class="card portion-card animate-pop" data-index="${i}" style="animation-delay: ${i * 0.04}s">
         <div class="portion-num${isComplete ? " complete" : ""}">${p.portion}</div>
         <div class="portion-info">
           <div class="portion-title">Portion ${p.portion}</div>
           <div class="portion-date">${p.day}, ${p.date}</div>
-          <div class="portion-progress">
-            <div class="progress-bar">
-              <div class="progress-fill${isComplete ? " complete" : ""}" style="width:${pct}%"></div>
-            </div>
-            <span class="progress-text">${learned}/${total}</span>
-          </div>
-          ${scoreHtml}
+          ${progressRow("DE\u2192EN", deEn.learned, deEn.total, scoreDe)}
+          ${progressRow("EN\u2192DE", enDe.learned, enDe.total, scoreEn)}
         </div>
       </div>
     `;
@@ -407,7 +418,7 @@ function renderQuiz() {
   const dirLabel = isDeEn ? "Deutsch \u2192 English" : "English \u2192 Deutsch";
 
   const termKey = word.english.toLowerCase();
-  const streak = getTermStreak(state.currentUser, state.selectedPortion, termKey);
+  const streak = getTermStreak(state.currentUser, state.selectedPortion, termKey, state.direction);
   const dots = Array.from({ length: STREAK_GOAL }, (_, i) =>
     `<div class="streak-dot${i < streak ? " filled" : ""}"></div>`
   ).join("");
@@ -516,7 +527,7 @@ function submitAnswer(userInput) {
   state.answered = true;
   state.answers.push({ word, correct, userAnswer: userInput, correctAnswer: correctField });
 
-  updateTermStreak(state.currentUser, state.selectedPortion, termKey, correct);
+  updateTermStreak(state.currentUser, state.selectedPortion, termKey, state.direction, correct);
   render();
 }
 
@@ -526,7 +537,7 @@ function nextWord() {
   if (state.currentIndex >= state.quizWords.length) {
     // Save quiz score
     const correctCount = state.answers.filter(a => a.correct).length;
-    saveQuizScore(state.currentUser, state.selectedPortion, correctCount, state.answers.length);
+    saveQuizScore(state.currentUser, state.selectedPortion, state.direction, correctCount, state.answers.length);
     state.screen = "results";
   }
   render();
@@ -545,7 +556,8 @@ function renderResults() {
     stars += i < starCount ? "\u2B50" : "\u2606";
   }
 
-  const { learned, total: portionTotal } = getPortionProgress(state.currentUser, state.selectedPortion);
+  const { learned, total: portionTotal } = getPortionProgress(state.currentUser, state.selectedPortion, state.direction);
+  const dirDisplay = state.direction === "de-en" ? "DE\u2192EN" : "EN\u2192DE";
 
   const items = state.answers.map(a => {
     const cls = a.correct ? "correct" : "wrong";
@@ -577,7 +589,7 @@ function renderResults() {
       <div class="results-score">${correctCount}/${total}</div>
       <div class="results-label">${pct}% richtig</div>
       <div class="results-label" style="margin-top:8px; font-size:0.9rem; color:var(--text-light)">
-        Fortschritt: ${learned}/${portionTotal} Begriffe gelernt
+        ${dirDisplay}: ${learned}/${portionTotal} Begriffe gelernt
       </div>
       <div class="results-list">${items}</div>
       <div class="results-actions">

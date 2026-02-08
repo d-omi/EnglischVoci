@@ -199,8 +199,8 @@ function getPortionProgress(user, portionIndex, direction) {
 
 /* ─── Answer matching ─────────────────────────────────────────── */
 function normalize(str) {
-  return str.trim().toLowerCase()
-    .replace(/[''`]/g, "'")
+  return str.trim()
+    .replace(/['\u2018\u2019`]/g, "'")
     .replace(/\s+/g, " ");
 }
 

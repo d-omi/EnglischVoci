@@ -1,0 +1,158 @@
+{
+  "title": "Class vocabulary Unit 4 and 2",
+  "portions": [
+    {
+      "portion": 1,
+      "day": "Montag",
+      "date": "2026-01-12",
+      "vocabulary": [
+        { "english": "owl", "german": "Eule" },
+        { "english": "woodpecker", "german": "Specht" },
+        { "english": "beehive", "german": "Bienenstock" },
+        { "english": "butterfly", "german": "Schmetterling" },
+        { "english": "town", "german": "Stadt" },
+        { "english": "baker", "german": "Bäcker/-in" },
+        { "english": "butcher", "german": "Metzger/-in" },
+        { "english": "shop assistant", "german": "Verkäufer/-in, Ladenangestellte/-r" }
+      ],
+      "sentences": [
+        "The owl is awake in the night.",
+        "The bees live in the beehive."
+      ]
+    },
+    {
+      "portion": 2,
+      "day": "Montag",
+      "date": "2026-01-19",
+      "vocabulary": [
+        { "english": "anthill", "german": "Ameisenhaufen" },
+        { "english": "hedgehog", "german": "Igel" },
+        { "english": "blackbird", "german": "Amsel" },
+        { "english": "squirrel", "german": "Eichhörnchen" },
+        { "english": "cross the street", "german": "die Strasse überqueren" },
+        { "english": "waiter, waitress", "german": "Serviceangestellter, Serviceangestellte" },
+        { "english": "police officer", "german": "Polizeibeamter/-beamtin" },
+        { "english": "street cleaner", "german": "Strassenputzer/-in" }
+      ],
+      "sentences": [
+        "The hedgehog likes to hide under a pile of leaves.",
+        "The blackbird is singing."
+      ]
+    },
+    {
+      "portion": 3,
+      "day": "Montag",
+      "date": "2026-01-26",
+      "vocabulary": [
+        { "english": "mouse (pl. mice)", "german": "Maus" },
+        { "english": "fox (pl. foxes)", "german": "Fuchs" },
+        { "english": "deer (pl. deer)", "german": "Hirsch, Reh" },
+        { "english": "a pile of (leaves)", "german": "ein Haufen (Blätter)" },
+        { "english": "village", "german": "Dorf" },
+        { "english": "librarian", "german": "Bibliothekar/-in" },
+        { "english": "doctor", "german": "Arzt/Ärztin" },
+        { "english": "reporter", "german": "Reporter/-in" }
+      ],
+      "sentences": [
+        "The mouse likes to eat cheese.",
+        "The deer lives in the forest."
+      ]
+    },
+    {
+      "portion": 4,
+      "day": "Montag",
+      "date": "2026-02-02",
+      "vocabulary": [
+        { "english": "branch", "german": "Ast, Zweig" },
+        { "english": "log", "german": "Baumstamm (eines gefällten Baums)" },
+        { "english": "tree trunk", "german": "Baumstamm (eines lebenden Baums)" },
+        { "english": "root", "german": "Wurzel" },
+        { "english": "stick", "german": "Zweig, Stock" },
+        { "english": "work", "german": "arbeiten" },
+        { "english": "sell", "german": "verkaufen" },
+        { "english": "job", "german": "Job, Arbeit, Beruf" }
+      ],
+      "sentences": [
+        "The bird is sitting on a branch.",
+        "The frog is sitting on a log."
+      ]
+    },
+    {
+      "portion": 5,
+      "day": "Montag",
+      "date": "2026-02-23",
+      "vocabulary": [
+        { "english": "board", "german": "Brett" },
+        { "english": "forest", "german": "Wald" },
+        { "english": "rubbish", "german": "Abfall, Müll" },
+        { "english": "catch", "german": "fangen" },
+        { "english": "fly", "german": "fliegen" },
+        { "english": "bakery", "german": "Bäckerei" },
+        { "english": "hospital", "german": "Spital, Krankenhaus" },
+        { "english": "library", "german": "Bibliothek" }
+      ],
+      "sentences": [
+        "The fisher catches a fish.",
+        "Don't leave your rubbish in the forest."
+      ]
+    },
+    {
+      "portion": 6,
+      "day": "Montag",
+      "date": "2026-03-02",
+      "vocabulary": [
+        { "english": "hunt", "german": "jagen" },
+        { "english": "be awake", "german": "wach sein" },
+        { "english": "cut", "german": "schneiden" },
+        { "english": "climb", "german": "klettern" },
+        { "english": "nail", "german": "nageln" },
+        { "english": "cinema", "german": "Kino" },
+        { "english": "shop", "german": "Laden" },
+        { "english": "train station", "german": "Bahnhof" }
+      ],
+      "sentences": [
+        "The fox is hunting a mouse.",
+        "You can climb up a tree."
+      ]
+    },
+    {
+      "portion": 7,
+      "day": "Montag",
+      "date": "2026-03-09",
+      "vocabulary": [
+        { "english": "Don't feed the animals!", "german": "Tiere nicht füttern! Tiere füttern verboten!" },
+        { "english": "at night", "german": "in der Nacht" },
+        { "english": "during the day", "german": "am Tag, tagsüber, während des Tages" },
+        { "english": "bus terminal", "german": "Busbahnhof" },
+        { "english": "map", "german": "(Land-)Karte, Stadtplan" },
+        { "english": "street", "german": "Strasse" },
+        { "english": "countryside", "german": "Land, Landschaft" },
+        { "english": "letter", "german": "Brief" }
+      ],
+      "sentences": [
+        "The hedgehog is sleeping during the day.",
+        "There are no buses at night."
+      ]
+    },
+    {
+      "portion": 8,
+      "day": "Montag",
+      "date": "2026-03-16",
+      "vocabulary": [
+        { "english": "snail", "german": "Schnecke" },
+        { "english": "rabbit", "german": "Kaninchen, Hase" },
+        { "english": "spiderweb", "german": "Spinnennetz" },
+        { "english": "live", "german": "leben, wohnen" },
+        { "english": "noisy", "german": "laut, lärmend" },
+        { "english": "quiet", "german": "leise, ruhig, still" },
+        { "english": "in front of the building", "german": "vor dem Gebäude" },
+        { "english": "turn left/right", "german": "nach links/rechts gehen" },
+        { "english": "walk straight on", "german": "geradeaus gehen" }
+      ],
+      "sentences": [
+        "A snail is slow.",
+        "Rabbits like to eat carrots."
+      ]
+    }
+  ]
+}

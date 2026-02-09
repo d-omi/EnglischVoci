@@ -113,6 +113,10 @@ const VOCABULARY = {
 /* ─── Constants ───────────────────────────────────────────────── */
 const STREAK_GOAL = 3;
 const STORAGE_PREFIX = "vociQuiz_";
+const BLOCK_SPACING = 200;
+const WORLD_PADDING_LEFT = 120;
+const WORLD_PADDING_RIGHT = 200;
+const VIEWPORT_WIDTH = 600;
 
 /* ─── State ───────────────────────────────────────────────────── */
 let state = {
@@ -125,8 +129,8 @@ let state = {
   answered: false,
   answers: [],
   showQuestion: false,
-  nodeStates: [],   // "locked" | "current" | "correct" | "wrong"
-  foxTarget: 0,
+  nodeStates: [],
+  charPos: 0,
 };
 
 /* ─── LocalStorage helpers ────────────────────────────────────── */
@@ -215,124 +219,7 @@ function shuffle(arr) {
   return a;
 }
 
-/* ─── Map path generation ─────────────────────────────────────── */
-function generateMapCoords(numNodes) {
-  const W = 500, padX = 80, padTop = 70, padBot = 50;
-  const H = padTop + (numNodes - 1) * 90 + padBot;
-  const coords = [];
-  for (let i = 0; i < numNodes; i++) {
-    const y = H - padBot - i * 90;
-    const xCenter = W / 2;
-    const offset = (i % 2 === 0 ? -1 : 1) * 120;
-    coords.push({ x: xCenter + offset, y, index: i });
-  }
-  return { coords, width: W, height: H };
-}
-
-/* ─── SVG helpers ─────────────────────────────────────────────── */
-function buildSvgMap(coords, width, height, nodeStates, foxIdx, quizWords, direction) {
-  const isDeEn = direction === "de-en";
-
-  // Build path line
-  let pathD = `M ${coords[0].x} ${coords[0].y}`;
-  for (let i = 1; i < coords.length; i++) {
-    const prev = coords[i - 1], cur = coords[i];
-    const cpx1 = prev.x, cpy1 = prev.y - 30;
-    const cpx2 = cur.x, cpy2 = cur.y + 30;
-    pathD += ` C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${cur.x} ${cur.y}`;
-  }
-
-  // Decorative trees
-  let trees = "";
-  const treePositions = [];
-  const rng = mulberry32(42);
-  for (let i = 0; i < coords.length * 3; i++) {
-    const tx = 30 + rng() * (width - 60);
-    const ty = 30 + rng() * (height - 60);
-    // Don't place trees too close to nodes
-    const tooClose = coords.some(c => Math.hypot(c.x - tx, c.y - ty) < 60);
-    if (tooClose) continue;
-    treePositions.push({ x: tx, y: ty });
-    const size = 12 + rng() * 16;
-    const shade = Math.floor(rng() * 3);
-    const colors = ["#2d6a4f", "#40916c", "#52b788"];
-    trees += `<polygon points="${tx},${ty - size * 1.5} ${tx - size * 0.7},${ty} ${tx + size * 0.7},${ty}" fill="${colors[shade]}" opacity="0.7"/>`;
-    trees += `<rect x="${tx - 2}" y="${ty}" width="4" height="${size * 0.4}" fill="#8B6914" opacity="0.6"/>`;
-  }
-
-  // Mushrooms & flowers
-  let decor = "";
-  for (let i = 0; i < 8; i++) {
-    const dx = 20 + rng() * (width - 40);
-    const dy = 20 + rng() * (height - 40);
-    const tooClose = coords.some(c => Math.hypot(c.x - dx, c.y - dy) < 45);
-    if (tooClose) continue;
-    if (rng() > 0.5) {
-      // Flower
-      const fc = ["#FF6B6B", "#FFD43B", "#a5a0ff", "#FF8ED4"][Math.floor(rng() * 4)];
-      decor += `<circle cx="${dx}" cy="${dy}" r="4" fill="${fc}" opacity="0.6"/>`;
-    } else {
-      // Mushroom
-      decor += `<ellipse cx="${dx}" cy="${dy}" rx="5" ry="3.5" fill="#FF6B6B" opacity="0.5"/>`;
-      decor += `<rect x="${dx - 1.2}" y="${dy}" width="2.4" height="5" fill="#f0e6d2" opacity="0.5"/>`;
-    }
-  }
-
-  // Nodes
-  let nodes = "";
-  for (let i = 0; i < coords.length; i++) {
-    const c = coords[i];
-    const st = nodeStates[i] || "locked";
-    const word = quizWords[i];
-    const label = isDeEn ? word.german : word.english;
-    const shortLabel = label.length > 16 ? label.slice(0, 14) + "\u2026" : label;
-
-    const glowColor = st === "correct" ? "#51CF66" : st === "wrong" ? "#FF6B6B" : "transparent";
-    nodes += `
-      <g class="map-node ${st}" data-node="${i}">
-        <circle class="node-glow" cx="${c.x}" cy="${c.y}" r="32" fill="${glowColor}"/>
-        <circle class="node-circle-bg" cx="${c.x}" cy="${c.y}" r="22"/>
-        <text class="node-label" x="${c.x}" y="${c.y}">${st === "correct" ? "\u2713" : st === "wrong" ? "\u2717" : i + 1}</text>
-        <text class="node-word-label" x="${c.x}" y="${c.y + 36}">${escSvg(shortLabel)}</text>
-      </g>`;
-  }
-
-  // Fox at foxIdx position
-  const fc = coords[Math.min(foxIdx, coords.length - 1)];
-  const fox = `
-    <g class="fox-character" style="transform: translate(${fc.x}px, ${fc.y - 38}px)">
-      <text font-size="32" text-anchor="middle" x="0" y="0">\uD83E\uDD8A</text>
-    </g>`;
-
-  // Finish flag at the top
-  const last = coords[coords.length - 1];
-  const flag = `<text font-size="22" text-anchor="middle" x="${last.x}" y="${last.y - 40}">\uD83C\uDFC1</text>`;
-
-  // Start sign at the bottom
-  const first = coords[0];
-  const start = `<text font-size="18" text-anchor="middle" x="${first.x}" y="${first.y + 55}">\uD83C\uDFD5\uFE0F Start</text>`;
-
-  return `
-    <svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#87CEEB"/>
-          <stop offset="100%" stop-color="#d4edda"/>
-        </linearGradient>
-      </defs>
-      <rect width="${width}" height="${height}" fill="url(#sky)"/>
-      ${trees}
-      ${decor}
-      <path d="${pathD}" fill="none" stroke="#c9a96e" stroke-width="18" stroke-linecap="round" opacity="0.5"/>
-      <path d="${pathD}" fill="none" stroke="#d4b87a" stroke-width="10" stroke-linecap="round" stroke-dasharray="4 12" opacity="0.4"/>
-      ${flag}
-      ${start}
-      ${nodes}
-      ${fox}
-    </svg>`;
-}
-
-// Simple seeded RNG for consistent tree placement
+/* ─── Seeded RNG for decorative placement ─────────────────────── */
 function mulberry32(a) {
   return function() {
     a |= 0; a = a + 0x6D2B79F5 | 0;
@@ -342,8 +229,100 @@ function mulberry32(a) {
   };
 }
 
-function escSvg(str) {
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+/* ─── Game World Builder ──────────────────────────────────────── */
+function getBlockX(index) {
+  return WORLD_PADDING_LEFT + index * BLOCK_SPACING;
+}
+
+function getWorldWidth(numBlocks) {
+  return WORLD_PADDING_LEFT + (numBlocks - 1) * BLOCK_SPACING + WORLD_PADDING_RIGHT;
+}
+
+function buildWorldHTML(numBlocks, nodeStates, quizWords, direction) {
+  const worldW = getWorldWidth(numBlocks);
+  const isDeEn = direction === "de-en";
+  const rng = mulberry32(73);
+  let html = "";
+
+  // Clouds
+  const cloudCount = Math.max(5, Math.floor(worldW / 300));
+  for (let i = 0; i < cloudCount; i++) {
+    const cx = 60 + rng() * (worldW - 120);
+    const cy = 20 + rng() * 60;
+    const type = rng() > 0.5 ? "cloud--1" : "cloud--2";
+    html += `<div class="cloud ${type}" style="left:${cx}px;top:${cy}px"></div>`;
+  }
+
+  // Hills (background)
+  const hillCount = Math.max(3, Math.floor(worldW / 400));
+  for (let i = 0; i < hillCount; i++) {
+    const hx = rng() * worldW;
+    const hw = 120 + rng() * 160;
+    const hh = 40 + rng() * 50;
+    const isBg = rng() > 0.5;
+    html += `<div class="hill${isBg ? " hill--bg" : ""}" style="left:${hx}px;width:${hw}px;height:${hh}px"></div>`;
+  }
+
+  // Bushes
+  const bushCount = Math.max(3, Math.floor(worldW / 350));
+  for (let i = 0; i < bushCount; i++) {
+    const bx = 40 + rng() * (worldW - 80);
+    // Don't place too close to a block
+    const tooClose = Array.from({ length: numBlocks }, (_, j) => getBlockX(j)).some(blockX => Math.abs(blockX - bx) < 50);
+    if (tooClose) continue;
+    html += `<div class="bush" style="left:${bx}px"></div>`;
+  }
+
+  // Pipes (between some blocks)
+  for (let i = 0; i < numBlocks - 1; i++) {
+    if (rng() > 0.6) {
+      const px = getBlockX(i) + 90 + rng() * 60;
+      const ph = 40 + rng() * 30;
+      html += `<div class="pipe" style="left:${px}px;height:${ph}px"></div>`;
+    }
+  }
+
+  // Question blocks
+  for (let i = 0; i < numBlocks; i++) {
+    const bx = getBlockX(i);
+    const st = nodeStates[i] || "locked";
+    const word = quizWords[i];
+    const label = isDeEn ? word.german : word.english;
+    const shortLabel = label.length > 14 ? label.slice(0, 12) + "\u2026" : label;
+    const inner = st === "correct" ? "" : st === "wrong" ? "" : "?";
+    html += `<div class="q-block ${st}" data-block="${i}" style="left:${bx}px">${inner}<span class="q-block-word">${esc(shortLabel)}</span></div>`;
+  }
+
+  // Flag pole at the end
+  const flagX = getBlockX(numBlocks - 1) + BLOCK_SPACING * 0.7;
+  html += `<div class="flag-pole" style="left:${flagX}px"></div>`;
+
+  // Ground (spans full world)
+  html += `<div class="ground" style="width:${worldW}px"></div>`;
+
+  // Character
+  html += `
+    <div class="character" id="game-char" style="left:${state.charPos}px">
+      <div class="char-body">
+        <div class="char-cap"></div>
+        <div class="char-head">
+          <div class="char-eye"></div>
+        </div>
+        <div class="char-shirt"></div>
+        <div class="char-legs"></div>
+      </div>
+    </div>`;
+
+  return { html, worldWidth: worldW };
+}
+
+/* ─── Viewport scrolling ──────────────────────────────────────── */
+function getScrollOffset(charX) {
+  const vw = Math.min(VIEWPORT_WIDTH, window.innerWidth - 24);
+  const half = vw / 2;
+  let offset = -(charX - half + 17);
+  if (offset > 0) offset = 0;
+  return offset;
 }
 
 /* ─── Rendering ───────────────────────────────────────────────── */
@@ -354,7 +333,7 @@ function render() {
   switch (state.screen) {
     case "welcome":   renderWelcome(); break;
     case "portions":  renderPortions(); break;
-    case "quiz":      renderMap(); break;
+    case "quiz":      renderGame(); break;
     case "results":   renderResults(); break;
   }
 }
@@ -373,7 +352,7 @@ function renderWelcome() {
     savedUsersHtml = `<div class="saved-users"><h3>Gespeicherte Profile</h3><div class="user-list">${items}</div></div>`;
   }
   $app.innerHTML = `
-    <div class="app-header"><h1>Englisch Voci Quiz</h1><div class="subtitle">Unit 4 &amp; 2</div></div>
+    <div class="app-header"><h1>Englisch Voci Quest</h1><div class="subtitle">Unit 4 &amp; 2</div></div>
     <div class="card welcome-card animate-pop">
       <h2>Wer bist du?</h2>
       <p>Gib deinen Namen ein oder w\u00e4hle dein Profil.</p>
@@ -447,7 +426,7 @@ function renderPortions() {
   document.querySelectorAll(".portion-card").forEach(el => el.addEventListener("click", () => startQuiz(parseInt(el.dataset.index))));
 }
 
-/* ── Adventure Map Quiz ───────────────────────────── */
+/* ── Mario Game Quiz ──────────────────────────────── */
 function startQuiz(portionIndex) {
   state.selectedPortion = portionIndex;
   state.quizWords = shuffle(VOCABULARY.portions[portionIndex].vocabulary);
@@ -456,30 +435,34 @@ function startQuiz(portionIndex) {
   state.answers = [];
   state.showQuestion = false;
   state.nodeStates = state.quizWords.map((_, i) => i === 0 ? "current" : "locked");
-  state.foxTarget = 0;
+  state.charPos = getBlockX(0) - 10;
   state.screen = "quiz";
   render();
 }
 
-function renderMap() {
+function renderGame() {
   const portion = VOCABULARY.portions[state.selectedPortion];
   const total = state.quizWords.length;
   const correctCount = state.answers.filter(a => a.correct).length;
-  const { coords, width, height } = generateMapCoords(total);
-  const svg = buildSvgMap(coords, width, height, state.nodeStates, state.foxTarget, state.quizWords, state.direction);
+  const { html: worldHTML, worldWidth } = buildWorldHTML(total, state.nodeStates, state.quizWords, state.direction);
+  const scrollOffset = getScrollOffset(state.charPos);
 
   $app.innerHTML = `
-    <div class="map-header">
-      <button class="back-btn" id="map-back">&larr;</button>
-      <span class="map-title">Portion ${portion.portion}</span>
-      <span class="map-score">${correctCount}/${state.answers.length}</span>
+    <div class="game-hud">
+      <button class="hud-back" id="game-back">\u2190 BACK</button>
+      <span class="hud-portion">PORTION ${portion.portion}</span>
+      <span class="hud-score">\u2B50 ${correctCount}/${state.answers.length}</span>
     </div>
     <div class="direction-toggle">
-      <button class="${state.direction === "de-en" ? "active" : ""}" data-dir="de-en">DE &rarr; EN</button>
-      <button class="${state.direction === "en-de" ? "active" : ""}" data-dir="en-de">EN &rarr; DE</button>
+      <button class="${state.direction === "de-en" ? "active" : ""}" data-dir="de-en">DE \u2192 EN</button>
+      <button class="${state.direction === "en-de" ? "active" : ""}" data-dir="en-de">EN \u2192 DE</button>
     </div>
-    <div class="map-container">${svg}</div>
-    <div class="map-hint">Tippe auf den gelben Punkt!</div>`;
+    <div class="game-viewport">
+      <div class="game-world" id="game-world" style="width:${worldWidth}px;transform:translateX(${scrollOffset}px)">
+        ${worldHTML}
+      </div>
+    </div>
+    <div class="game-hint">Tippe auf den ? Block!</div>`;
 
   // Question overlay
   if (state.showQuestion) {
@@ -487,7 +470,10 @@ function renderMap() {
   }
 
   // Events
-  document.getElementById("map-back").addEventListener("click", () => { state.screen = "portions"; render(); });
+  document.getElementById("game-back").addEventListener("click", () => {
+    state.screen = "portions";
+    render();
+  });
 
   document.querySelectorAll(".direction-toggle button").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -498,8 +484,8 @@ function renderMap() {
     });
   });
 
-  // Click on current node to open question
-  document.querySelectorAll(".map-node.current").forEach(el => {
+  // Click on current question block
+  document.querySelectorAll(".q-block.current").forEach(el => {
     el.addEventListener("click", () => {
       if (!state.showQuestion) {
         state.showQuestion = true;
@@ -511,7 +497,6 @@ function renderMap() {
 }
 
 function renderQuestionOverlay() {
-  // Remove existing overlay
   const existing = document.querySelector(".question-overlay");
   if (existing) existing.remove();
 
@@ -532,11 +517,11 @@ function renderQuestionOverlay() {
   if (state.answered) {
     const last = state.answers[state.answers.length - 1];
     if (last.correct) {
-      feedbackHtml = `<div class="feedback correct animate-bounce">Richtig!</div><div class="example-sentence">${esc(word.example)}</div>`;
+      feedbackHtml = `<div class="feedback correct">Richtig!</div><div class="example-sentence">${esc(word.example)}</div>`;
       inputExtra = "correct";
     } else {
       const correctDisplay = isDeEn ? word.english : word.german;
-      feedbackHtml = `<div class="feedback wrong animate-shake">Falsch!</div><div class="correct-answer-display">Richtig: <strong>${esc(correctDisplay)}</strong></div><div class="example-sentence">${esc(word.example)}</div>`;
+      feedbackHtml = `<div class="feedback wrong">Falsch!</div><div class="correct-answer-display">Richtig: <strong>${esc(correctDisplay)}</strong></div><div class="example-sentence">${esc(word.example)}</div>`;
       inputExtra = "wrong";
     }
     const isLast = state.currentIndex >= state.quizWords.length - 1;
@@ -563,16 +548,16 @@ function renderQuestionOverlay() {
   if (state.answered) {
     const last = state.answers[state.answers.length - 1];
     document.getElementById("q-input").value = last.userAnswer;
-    document.getElementById("q-next").addEventListener("click", advanceMap);
+    document.getElementById("q-next").addEventListener("click", advanceGame);
   } else {
     const input = document.getElementById("q-input");
-    document.getElementById("q-check").addEventListener("click", () => submitMapAnswer(input.value));
-    input.addEventListener("keydown", e => { if (e.key === "Enter") submitMapAnswer(input.value); });
+    document.getElementById("q-check").addEventListener("click", () => submitAnswer(input.value));
+    input.addEventListener("keydown", e => { if (e.key === "Enter") submitAnswer(input.value); });
     setTimeout(() => input.focus(), 100);
   }
 }
 
-function submitMapAnswer(userInput) {
+function submitAnswer(userInput) {
   if (state.answered) return;
   const word = state.quizWords[state.currentIndex];
   const isDeEn = state.direction === "de-en";
@@ -585,11 +570,52 @@ function submitMapAnswer(userInput) {
   state.nodeStates[state.currentIndex] = correct ? "correct" : "wrong";
   updateTermStreak(state.currentUser, state.selectedPortion, termKey, state.direction, correct);
 
+  // Update block appearance immediately
+  const block = document.querySelector(`.q-block[data-block="${state.currentIndex}"]`);
+  if (block) {
+    block.className = `q-block ${correct ? "correct" : "wrong"}`;
+    block.textContent = "";
+    // Re-add word label
+    const word2 = state.quizWords[state.currentIndex];
+    const label = isDeEn ? word2.german : word2.english;
+    const shortLabel = label.length > 14 ? label.slice(0, 12) + "\u2026" : label;
+    const span = document.createElement("span");
+    span.className = "q-block-word";
+    span.textContent = shortLabel;
+    block.appendChild(span);
+  }
+
+  // Character animation
+  const charEl = document.getElementById("game-char");
+  if (charEl) {
+    if (correct) {
+      charEl.classList.add("jumping");
+      // Coin burst
+      spawnCoinBurst(state.charPos + 17);
+      setTimeout(() => charEl.classList.remove("jumping"), 500);
+    } else {
+      charEl.classList.add("stumble");
+      setTimeout(() => charEl.classList.remove("stumble"), 500);
+    }
+  }
+
   // Re-render overlay with feedback
   renderQuestionOverlay();
 }
 
-function advanceMap() {
+function spawnCoinBurst(x) {
+  const world = document.getElementById("game-world");
+  if (!world) return;
+  const coin = document.createElement("div");
+  coin.className = "coin-burst";
+  coin.textContent = "\uD83E\uDE99";
+  coin.style.left = (x) + "px";
+  coin.style.bottom = "120px";
+  world.appendChild(coin);
+  setTimeout(() => coin.remove(), 700);
+}
+
+function advanceGame() {
   // Close overlay
   const overlay = document.querySelector(".question-overlay");
   if (overlay) overlay.remove();
@@ -599,19 +625,50 @@ function advanceMap() {
   state.answered = false;
 
   if (state.currentIndex >= state.quizWords.length) {
-    // Done - save score, move fox to last node, then show results
+    // Done - save score
     const correctCount = state.answers.filter(a => a.correct).length;
     saveQuizScore(state.currentUser, state.selectedPortion, state.direction, correctCount, state.answers.length);
-    state.foxTarget = state.quizWords.length - 1;
-    render();
-    setTimeout(() => { state.screen = "results"; render(); }, 1000);
+
+    // Walk character to flag pole, then show results
+    const flagPos = getBlockX(state.quizWords.length - 1) + BLOCK_SPACING * 0.7 - 10;
+    moveCharTo(flagPos);
+    setTimeout(() => { state.screen = "results"; render(); }, 900);
     return;
   }
 
-  // Move fox and unlock next node - user clicks the pulsing node to continue
+  // Unlock next block and walk character there
   state.nodeStates[state.currentIndex] = "current";
-  state.foxTarget = state.currentIndex;
-  render();
+  const nextX = getBlockX(state.currentIndex) - 10;
+  moveCharTo(nextX);
+
+  // Update block classes without full re-render
+  const nextBlock = document.querySelector(`.q-block[data-block="${state.currentIndex}"]`);
+  if (nextBlock) {
+    nextBlock.className = "q-block current";
+    nextBlock.addEventListener("click", () => {
+      if (!state.showQuestion) {
+        state.showQuestion = true;
+        state.answered = false;
+        renderQuestionOverlay();
+      }
+    });
+  }
+}
+
+function moveCharTo(targetX) {
+  state.charPos = targetX;
+  const charEl = document.getElementById("game-char");
+  const world = document.getElementById("game-world");
+  if (charEl) {
+    charEl.classList.add("walking");
+    charEl.style.left = targetX + "px";
+    setTimeout(() => charEl.classList.remove("walking"), 600);
+  }
+  // Scroll viewport
+  if (world) {
+    const offset = getScrollOffset(targetX);
+    world.style.transform = `translateX(${offset}px)`;
+  }
 }
 
 /* ── Results ──────────────────────────────────────── */

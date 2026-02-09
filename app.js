@@ -118,6 +118,22 @@ const WORLD_PADDING_LEFT = 120;
 const WORLD_PADDING_RIGHT = 200;
 const VIEWPORT_WIDTH = 600;
 
+/* ─── Portion Themes ──────────────────────────────────────────── */
+const THEMES = [
+  { css: "theme-meadow",  name: "Wiese",   deco: "default" },
+  { css: "theme-desert",  name: "Wüste",   deco: "cactus" },
+  { css: "theme-snow",    name: "Schnee",  deco: "snowman" },
+  { css: "theme-night",   name: "Nacht",   deco: "stars" },
+  { css: "theme-beach",   name: "Strand",  deco: "palm" },
+  { css: "theme-autumn",  name: "Herbst",  deco: "default" },
+  { css: "theme-space",   name: "Weltraum",deco: "stars" },
+  { css: "theme-candy",   name: "Candy",   deco: "lollipop" },
+];
+
+function getTheme(portionIndex) {
+  return THEMES[portionIndex % THEMES.length];
+}
+
 /* ─── State ───────────────────────────────────────────────────── */
 let state = {
   screen: "welcome",
@@ -238,19 +254,33 @@ function getWorldWidth(numBlocks) {
   return WORLD_PADDING_LEFT + (numBlocks - 1) * BLOCK_SPACING + WORLD_PADDING_RIGHT;
 }
 
-function buildWorldHTML(numBlocks, nodeStates, quizWords, direction) {
+function buildWorldHTML(numBlocks, nodeStates, quizWords, direction, portionIndex) {
   const worldW = getWorldWidth(numBlocks);
   const isDeEn = direction === "de-en";
-  const rng = mulberry32(73);
+  const theme = getTheme(portionIndex);
+  const rng = mulberry32(73 + portionIndex * 17);
   let html = "";
 
-  // Clouds
-  const cloudCount = Math.max(5, Math.floor(worldW / 300));
-  for (let i = 0; i < cloudCount; i++) {
-    const cx = 60 + rng() * (worldW - 120);
-    const cy = 20 + rng() * 60;
-    const type = rng() > 0.5 ? "cloud--1" : "cloud--2";
-    html += `<div class="cloud ${type}" style="left:${cx}px;top:${cy}px"></div>`;
+  // Stars (night/space themes)
+  if (theme.deco === "stars") {
+    const starCount = Math.floor(worldW / 40);
+    for (let i = 0; i < starCount; i++) {
+      const sx = rng() * worldW;
+      const sy = rng() * 120;
+      const big = rng() > 0.8;
+      html += `<div class="star${big ? " big" : ""}" style="left:${sx}px;top:${sy}px;animation-delay:${rng() * 2}s"></div>`;
+    }
+  }
+
+  // Clouds (skip for space theme)
+  if (theme.deco !== "stars") {
+    const cloudCount = Math.max(4, Math.floor(worldW / 350));
+    for (let i = 0; i < cloudCount; i++) {
+      const cx = 60 + rng() * (worldW - 120);
+      const cy = 15 + rng() * 65;
+      const type = rng() > 0.5 ? "cloud--1" : "cloud--2";
+      html += `<div class="cloud ${type}" style="left:${cx}px;top:${cy}px"></div>`;
+    }
   }
 
   // Hills (background)
@@ -263,17 +293,50 @@ function buildWorldHTML(numBlocks, nodeStates, quizWords, direction) {
     html += `<div class="hill${isBg ? " hill--bg" : ""}" style="left:${hx}px;width:${hw}px;height:${hh}px"></div>`;
   }
 
-  // Bushes
-  const bushCount = Math.max(3, Math.floor(worldW / 350));
-  for (let i = 0; i < bushCount; i++) {
-    const bx = 40 + rng() * (worldW - 80);
-    // Don't place too close to a block
-    const tooClose = Array.from({ length: numBlocks }, (_, j) => getBlockX(j)).some(blockX => Math.abs(blockX - bx) < 50);
-    if (tooClose) continue;
-    html += `<div class="bush" style="left:${bx}px"></div>`;
+  // Theme-specific decorations
+  const blockPositions = Array.from({ length: numBlocks }, (_, j) => getBlockX(j));
+  const isTooClose = (x) => blockPositions.some(bx => Math.abs(bx - x) < 55);
+
+  if (theme.deco === "cactus") {
+    for (let i = 0; i < Math.floor(worldW / 250); i++) {
+      const cx = 50 + rng() * (worldW - 100);
+      if (isTooClose(cx)) continue;
+      const ch = 30 + rng() * 25;
+      html += `<div class="cactus" style="left:${cx}px;height:${ch}px"></div>`;
+    }
+  } else if (theme.deco === "snowman") {
+    for (let i = 0; i < Math.floor(worldW / 400); i++) {
+      const sx = 50 + rng() * (worldW - 100);
+      if (isTooClose(sx)) continue;
+      html += `<div class="snowman" style="left:${sx}px"><div class="snowman-hat"></div><div class="snowman-top"></div><div class="snowman-bot"></div></div>`;
+    }
+  } else if (theme.deco === "palm") {
+    for (let i = 0; i < Math.floor(worldW / 400); i++) {
+      const px = 50 + rng() * (worldW - 100);
+      if (isTooClose(px)) continue;
+      html += `<div class="palm" style="left:${px}px"><div class="palm-leaf"></div><div class="palm-leaf"></div><div class="palm-leaf"></div><div class="palm-trunk"></div></div>`;
+    }
+  } else if (theme.deco === "lollipop") {
+    const colors = ["#ff6b9d","#c084fc","#67e8f9","#fbbf24","#34d399"];
+    for (let i = 0; i < Math.floor(worldW / 300); i++) {
+      const lx = 50 + rng() * (worldW - 100);
+      if (isTooClose(lx)) continue;
+      const col = colors[Math.floor(rng() * colors.length)];
+      html += `<div class="lollipop" style="left:${lx}px"><div class="lollipop-top" style="border-color:${col}"></div><div class="lollipop-stick"></div></div>`;
+    }
   }
 
-  // Pipes (between some blocks)
+  // Bushes (not for desert/snow/space)
+  if (!["cactus","snowman","stars"].includes(theme.deco)) {
+    const bushCount = Math.max(3, Math.floor(worldW / 350));
+    for (let i = 0; i < bushCount; i++) {
+      const bx = 40 + rng() * (worldW - 80);
+      if (isTooClose(bx)) continue;
+      html += `<div class="bush" style="left:${bx}px"></div>`;
+    }
+  }
+
+  // Pipes
   for (let i = 0; i < numBlocks - 1; i++) {
     if (rng() > 0.6) {
       const px = getBlockX(i) + 90 + rng() * 60;
@@ -444,25 +507,39 @@ function renderGame() {
   const portion = VOCABULARY.portions[state.selectedPortion];
   const total = state.quizWords.length;
   const correctCount = state.answers.filter(a => a.correct).length;
-  const { html: worldHTML, worldWidth } = buildWorldHTML(total, state.nodeStates, state.quizWords, state.direction);
+  const theme = getTheme(state.selectedPortion);
+  const { html: worldHTML, worldWidth } = buildWorldHTML(total, state.nodeStates, state.quizWords, state.direction, state.selectedPortion);
   const scrollOffset = getScrollOffset(state.charPos);
+
+  // Overall portion progress (how many terms learned across all time)
+  const progress = getPortionProgress(state.currentUser, state.selectedPortion, state.direction);
+  const progressPct = Math.round((progress.learned / progress.total) * 100);
+
+  // Current quiz progress
+  const quizDone = state.answers.length;
+  const quizPct = Math.round((quizDone / total) * 100);
 
   $app.innerHTML = `
     <div class="game-hud">
       <button class="hud-back" id="game-back">\u2190 BACK</button>
-      <span class="hud-portion">PORTION ${portion.portion}</span>
-      <span class="hud-score">\u2B50 ${correctCount}/${state.answers.length}</span>
+      <span class="hud-portion">${esc(theme.name).toUpperCase()}</span>
+      <span class="hud-score">\u2B50 ${correctCount}/${quizDone}</span>
+    </div>
+    <div class="hud-progress">
+      <span>Quiz</span>
+      <div class="hud-progress-bar"><div class="hud-progress-fill" style="width:${quizPct}%"></div></div>
+      <span class="hud-progress-text">${quizDone}/${total}</span>
     </div>
     <div class="direction-toggle">
       <button class="${state.direction === "de-en" ? "active" : ""}" data-dir="de-en">DE \u2192 EN</button>
       <button class="${state.direction === "en-de" ? "active" : ""}" data-dir="en-de">EN \u2192 DE</button>
     </div>
-    <div class="game-viewport">
+    <div class="game-viewport ${theme.css}">
       <div class="game-world" id="game-world" style="width:${worldWidth}px;transform:translateX(${scrollOffset}px)">
         ${worldHTML}
       </div>
     </div>
-    <div class="game-hint">Tippe auf den ? Block!</div>`;
+    <div class="game-hint">${esc(theme.name)} \u2022 Portion ${portion.portion} \u2022 Gelernt: ${progress.learned}/${progress.total}</div>`;
 
   // Question overlay
   if (state.showQuestion) {
@@ -585,6 +662,9 @@ function submitAnswer(userInput) {
     block.appendChild(span);
   }
 
+  // Update HUD progress bar
+  updateHudProgress();
+
   // Character animation
   const charEl = document.getElementById("game-char");
   if (charEl) {
@@ -613,6 +693,29 @@ function spawnCoinBurst(x) {
   coin.style.bottom = "120px";
   world.appendChild(coin);
   setTimeout(() => coin.remove(), 700);
+}
+
+function updateHudProgress() {
+  const total = state.quizWords.length;
+  const quizDone = state.answers.length;
+  const correctCount = state.answers.filter(a => a.correct).length;
+  const quizPct = Math.round((quizDone / total) * 100);
+  // Update progress bar
+  const fill = document.querySelector(".hud-progress-fill");
+  if (fill) fill.style.width = quizPct + "%";
+  const text = document.querySelector(".hud-progress-text");
+  if (text) text.textContent = `${quizDone}/${total}`;
+  // Update score
+  const score = document.querySelector(".hud-score");
+  if (score) score.textContent = `\u2B50 ${correctCount}/${quizDone}`;
+  // Update bottom hint with overall progress
+  const hint = document.querySelector(".game-hint");
+  if (hint) {
+    const progress = getPortionProgress(state.currentUser, state.selectedPortion, state.direction);
+    const theme = getTheme(state.selectedPortion);
+    const portion = VOCABULARY.portions[state.selectedPortion];
+    hint.textContent = `${theme.name} \u2022 Portion ${portion.portion} \u2022 Gelernt: ${progress.learned}/${progress.total}`;
+  }
 }
 
 function advanceGame() {

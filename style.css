@@ -79,12 +79,76 @@ body{
 /* ── Game World ───────────────────────────────────── */
 .game-hud{
   display:flex;align-items:center;justify-content:space-between;
-  padding:8px 12px;margin-bottom:8px;
+  padding:8px 12px;margin-bottom:4px;
   font-family:'Press Start 2P',monospace;font-size:.65rem;color:#fff;
 }
 .hud-score{color:var(--coin)}
 .hud-portion{color:#fff}
 .hud-back{background:none;border:none;color:#fff;font-family:'Press Start 2P',monospace;font-size:.7rem;cursor:pointer;padding:4px}
+
+/* Progress bar under HUD */
+.hud-progress{display:flex;align-items:center;gap:8px;padding:0 12px 8px;font-family:'Press Start 2P',monospace;font-size:.5rem;color:rgba(255,255,255,.7)}
+.hud-progress-bar{flex:1;height:10px;background:rgba(255,255,255,.15);border-radius:5px;overflow:hidden;border:1px solid rgba(255,255,255,.2)}
+.hud-progress-fill{height:100%;border-radius:5px;transition:width .4s ease;background:var(--coin)}
+.hud-progress-text{white-space:nowrap;min-width:50px;text-align:right}
+
+/* ── World themes ────────────────────────────────── */
+/* Theme 1 – Meadow (default) */
+.theme-meadow{
+  --sky-top:#6085ff;--sky-bot:#9be0ff;
+  --ground:#8b5e3c;--grass:#4caf50;--grass-light:#66bb6a;
+  --hill-fg:#5cb85c;--hill-bg:#4caf50;--bush-fg:#43a047;--bush-light:#4caf50;
+  --pipe-green:#43a047;--pipe-dark:#2e7d32;
+}
+/* Theme 2 – Desert */
+.theme-desert{
+  --sky-top:#ff9a56;--sky-bot:#ffe0a0;
+  --ground:#d2a15a;--grass:#c4a24f;--grass-light:#d4b86a;
+  --hill-fg:#e0c080;--hill-bg:#d4ad6a;--bush-fg:#8b7a3a;--bush-light:#9b8a4a;
+  --pipe-green:#b8860b;--pipe-dark:#8b6508;
+}
+/* Theme 3 – Snow */
+.theme-snow{
+  --sky-top:#8ab4d6;--sky-bot:#d0e8f8;
+  --ground:#e8e8f0;--grass:#f0f4ff;--grass-light:#fff;
+  --hill-fg:#d0dde8;--hill-bg:#c0d0e0;--bush-fg:#a0b8c8;--bush-light:#b0c8d8;
+  --pipe-green:#7090a8;--pipe-dark:#506878;
+}
+/* Theme 4 – Night */
+.theme-night{
+  --sky-top:#0a0a2e;--sky-bot:#1a1a4e;
+  --ground:#2a2a3e;--grass:#1e3a1e;--grass-light:#2a4a2a;
+  --hill-fg:#1a2a3a;--hill-bg:#152535;--bush-fg:#1a3a1a;--bush-light:#2a4a2a;
+  --pipe-green:#2a5a2a;--pipe-dark:#1a3a1a;
+}
+/* Theme 5 – Beach */
+.theme-beach{
+  --sky-top:#36b5e0;--sky-bot:#87e0f5;
+  --ground:#f0d890;--grass:#e0c870;--grass-light:#f0d880;
+  --hill-fg:#70c060;--hill-bg:#60b050;--bush-fg:#50a040;--bush-light:#60b050;
+  --pipe-green:#e07040;--pipe-dark:#c05030;
+}
+/* Theme 6 – Autumn */
+.theme-autumn{
+  --sky-top:#7a8fb8;--sky-bot:#c8b8a0;
+  --ground:#6a4a2a;--grass:#8b6a3a;--grass-light:#9b7a4a;
+  --hill-fg:#c07830;--hill-bg:#a06828;--bush-fg:#b85c20;--bush-light:#c86c30;
+  --pipe-green:#8b5e3c;--pipe-dark:#6a4020;
+}
+/* Theme 7 – Space */
+.theme-space{
+  --sky-top:#050510;--sky-bot:#0a0a30;
+  --ground:#3a2a5a;--grass:#5a3a8a;--grass-light:#6a4a9a;
+  --hill-fg:#2a1a4a;--hill-bg:#201040;--bush-fg:#4a2a7a;--bush-light:#5a3a8a;
+  --pipe-green:#7a4ac0;--pipe-dark:#5a2a90;
+}
+/* Theme 8 – Candy */
+.theme-candy{
+  --sky-top:#ff90c0;--sky-bot:#ffc0e0;
+  --ground:#d070a0;--grass:#ff80b0;--grass-light:#ff90c0;
+  --hill-fg:#ff70d0;--hill-bg:#ff60c0;--bush-fg:#e060a0;--bush-light:#f070b0;
+  --pipe-green:#c050d0;--pipe-dark:#a030b0;
+}
 
 .game-viewport{
   position:relative;
@@ -105,10 +169,38 @@ body{
 /* Clouds */
 .cloud{
   position:absolute;
-  background:#fff;border-radius:50px;
+  background:var(--cloud-color,#fff);border-radius:50px;
   opacity:.85;
 }
-.cloud::before,.cloud::after{content:'';position:absolute;background:#fff;border-radius:50%}
+.cloud::before,.cloud::after{content:'';position:absolute;background:var(--cloud-color,#fff);border-radius:50%}
+
+/* Stars (night/space) */
+.star{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%}
+.star.big{width:5px;height:5px;animation:star-twinkle 1.5s ease-in-out infinite}
+@keyframes star-twinkle{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* Cactus (desert) */
+.cactus{position:absolute;bottom:60px;width:16px;background:#5a8a3a;border-radius:8px 8px 2px 2px;border:2px solid #4a7a2a}
+.cactus::before{content:'';position:absolute;width:10px;height:14px;background:#5a8a3a;border:2px solid #4a7a2a;border-radius:6px 6px 0 0;top:8px;left:-12px}
+.cactus::after{content:'';position:absolute;width:10px;height:10px;background:#5a8a3a;border:2px solid #4a7a2a;border-radius:6px 6px 0 0;top:14px;right:-12px}
+
+/* Snowman (snow) */
+.snowman{position:absolute;bottom:60px}
+.snowman-bot{width:24px;height:24px;background:#fff;border-radius:50%;border:1px solid #d0dde8}
+.snowman-top{width:16px;height:16px;background:#fff;border-radius:50%;border:1px solid #d0dde8;position:absolute;top:-12px;left:4px}
+.snowman-hat{width:20px;height:6px;background:#333;position:absolute;top:-17px;left:2px;border-radius:2px}
+
+/* Palm tree (beach) */
+.palm{position:absolute;bottom:60px}
+.palm-trunk{width:8px;height:60px;background:#8b6914;border-radius:4px;transform:rotate(5deg)}
+.palm-leaf{position:absolute;width:40px;height:12px;background:#3a8a30;border-radius:50%;top:-6px}
+.palm-leaf:nth-child(2){transform:rotate(-30deg);left:-10px}
+.palm-leaf:nth-child(3){transform:rotate(30deg);left:0px}
+
+/* Lollipop (candy) */
+.lollipop{position:absolute;bottom:60px}
+.lollipop-stick{width:4px;height:35px;background:#fff;margin:0 auto}
+.lollipop-top{width:22px;height:22px;border-radius:50%;border:4px solid;margin:0 auto}
 .cloud--1{width:80px;height:28px;top:30px}
 .cloud--1::before{width:40px;height:40px;top:-20px;left:15px}
 .cloud--1::after{width:30px;height:30px;top:-12px;left:42px}
@@ -117,8 +209,8 @@ body{
 .cloud--2::after{width:24px;height:24px;top:-10px;left:32px}
 
 /* Hills */
-.hill{position:absolute;bottom:60px;border-radius:50% 50% 0 0;background:#5cb85c}
-.hill--bg{background:#4caf50;opacity:.6}
+.hill{position:absolute;bottom:60px;border-radius:50% 50% 0 0;background:var(--hill-fg,#5cb85c)}
+.hill--bg{background:var(--hill-bg,#4caf50);opacity:.6}
 
 /* Ground */
 .ground{
@@ -135,9 +227,9 @@ body{
 .bush{
   position:absolute;bottom:58px;
   width:50px;height:26px;
-  background:#43a047;border-radius:50% 50% 10% 10%;
+  background:var(--bush-fg,#43a047);border-radius:50% 50% 10% 10%;
 }
-.bush::before{content:'';position:absolute;width:30px;height:20px;background:#4caf50;border-radius:50%;top:-8px;left:10px}
+.bush::before{content:'';position:absolute;width:30px;height:20px;background:var(--bush-light,#4caf50);border-radius:50%;top:-8px;left:10px}
 
 /* Pipe */
 .pipe{

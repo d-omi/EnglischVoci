@@ -140,13 +140,15 @@ let state = {
   currentUser: null,
   selectedPortion: null,
   direction: "de-en",
-  quizWords: [],
+  quizItems: [],     // [{type:"question",word,round}, {type:"checkpoint",round}]
   currentIndex: 0,
   answered: false,
   answers: [],
   showQuestion: false,
   nodeStates: [],
   charPos: 0,
+  currentRound: 0,
+  roundSize: 0,
 };
 
 /* ─── LocalStorage helpers ────────────────────────────────────── */
@@ -254,8 +256,9 @@ function getWorldWidth(numBlocks) {
   return WORLD_PADDING_LEFT + (numBlocks - 1) * BLOCK_SPACING + WORLD_PADDING_RIGHT;
 }
 
-function buildWorldHTML(numBlocks, nodeStates, quizWords, direction, portionIndex) {
-  const worldW = getWorldWidth(numBlocks);
+function buildWorldHTML(quizItems, nodeStates, direction, portionIndex) {
+  const numItems = quizItems.length;
+  const worldW = getWorldWidth(numItems);
   const isDeEn = direction === "de-en";
   const theme = getTheme(portionIndex);
   const rng = mulberry32(73 + portionIndex * 17);
@@ -294,7 +297,7 @@ function buildWorldHTML(numBlocks, nodeStates, quizWords, direction, portionInde
   }
 
   // Theme-specific decorations
-  const blockPositions = Array.from({ length: numBlocks }, (_, j) => getBlockX(j));
+  const blockPositions = Array.from({ length: numItems }, (_, j) => getBlockX(j));
   const isTooClose = (x) => blockPositions.some(bx => Math.abs(bx - x) < 55);
 
   if (theme.deco === "cactus") {
@@ -336,8 +339,9 @@ function buildWorldHTML(numBlocks, nodeStates, quizWords, direction, portionInde
     }
   }
 
-  // Pipes
-  for (let i = 0; i < numBlocks - 1; i++) {
+  // Pipes (skip near checkpoints)
+  for (let i = 0; i < numItems - 1; i++) {
+    if (quizItems[i].type === "checkpoint" || quizItems[i + 1].type === "checkpoint") continue;
     if (rng() > 0.6) {
       const px = getBlockX(i) + 90 + rng() * 60;
       const ph = 40 + rng() * 30;
@@ -345,19 +349,28 @@ function buildWorldHTML(numBlocks, nodeStates, quizWords, direction, portionInde
     }
   }
 
-  // Question blocks
-  for (let i = 0; i < numBlocks; i++) {
+  // Items: question blocks + checkpoint markers
+  for (let i = 0; i < numItems; i++) {
     const bx = getBlockX(i);
+    const item = quizItems[i];
     const st = nodeStates[i] || "locked";
-    const word = quizWords[i];
-    const label = isDeEn ? word.german : word.english;
-    const shortLabel = label.length > 14 ? label.slice(0, 12) + "\u2026" : label;
-    const inner = st === "correct" ? "" : st === "wrong" ? "" : "?";
-    html += `<div class="q-block ${st}" data-block="${i}" style="left:${bx}px">${inner}<span class="q-block-word">${esc(shortLabel)}</span></div>`;
+
+    if (item.type === "checkpoint") {
+      const reached = st === "checkpoint-reached";
+      html += `<div class="checkpoint-marker${reached ? " reached" : ""}" data-block="${i}" style="left:${bx}px">
+        <div class="checkpoint-banner"><span class="cp-round">\u2605</span>Runde ${item.round + 1}</div>
+        <div class="checkpoint-pole"></div>
+      </div>`;
+    } else {
+      const label = isDeEn ? item.word.german : item.word.english;
+      const shortLabel = label.length > 14 ? label.slice(0, 12) + "\u2026" : label;
+      const inner = st === "correct" ? "" : st === "wrong" ? "" : "?";
+      html += `<div class="q-block ${st}" data-block="${i}" style="left:${bx}px">${inner}<span class="q-block-word">${esc(shortLabel)}</span></div>`;
+    }
   }
 
   // Flag pole at the end
-  const flagX = getBlockX(numBlocks - 1) + BLOCK_SPACING * 0.7;
+  const flagX = getBlockX(numItems - 1) + BLOCK_SPACING * 0.7;
   html += `<div class="flag-pole" style="left:${flagX}px"></div>`;
 
   // Ground (spans full world)
@@ -489,46 +502,65 @@ function renderPortions() {
   document.querySelectorAll(".portion-card").forEach(el => el.addEventListener("click", () => startQuiz(parseInt(el.dataset.index))));
 }
 
-/* ── Mario Game Quiz ──────────────────────────────── */
+/* ── Mario Game Quiz (3 Rounds) ───────────────────── */
 function startQuiz(portionIndex) {
   state.selectedPortion = portionIndex;
-  state.quizWords = shuffle(VOCABULARY.portions[portionIndex].vocabulary);
+  const terms = VOCABULARY.portions[portionIndex].vocabulary;
+  state.roundSize = terms.length;
+  state.currentRound = 0;
+
+  // Build 3 rounds through all terms, each shuffled independently
+  state.quizItems = [];
+  for (let r = 0; r < STREAK_GOAL; r++) {
+    const shuffled = shuffle(terms);
+    for (const word of shuffled) {
+      state.quizItems.push({ type: "question", word, round: r });
+    }
+    if (r < STREAK_GOAL - 1) {
+      state.quizItems.push({ type: "checkpoint", round: r });
+    }
+  }
+
   state.currentIndex = 0;
   state.answered = false;
   state.answers = [];
   state.showQuestion = false;
-  state.nodeStates = state.quizWords.map((_, i) => i === 0 ? "current" : "locked");
+  state.nodeStates = state.quizItems.map((item, i) => {
+    if (i === 0) return "current";
+    return item.type === "checkpoint" ? "checkpoint-locked" : "locked";
+  });
   state.charPos = getBlockX(0) - 10;
   state.screen = "quiz";
   render();
 }
 
+function getQuestionCount() {
+  return state.quizItems.filter(i => i.type === "question").length;
+}
+
 function renderGame() {
   const portion = VOCABULARY.portions[state.selectedPortion];
-  const total = state.quizWords.length;
+  const totalQuestions = getQuestionCount();
+  const answeredCount = state.answers.length;
   const correctCount = state.answers.filter(a => a.correct).length;
   const theme = getTheme(state.selectedPortion);
-  const { html: worldHTML, worldWidth } = buildWorldHTML(total, state.nodeStates, state.quizWords, state.direction, state.selectedPortion);
+  const { html: worldHTML, worldWidth } = buildWorldHTML(state.quizItems, state.nodeStates, state.direction, state.selectedPortion);
   const scrollOffset = getScrollOffset(state.charPos);
 
-  // Overall portion progress (how many terms learned across all time)
+  // Overall portion progress
   const progress = getPortionProgress(state.currentUser, state.selectedPortion, state.direction);
-  const progressPct = Math.round((progress.learned / progress.total) * 100);
-
-  // Current quiz progress
-  const quizDone = state.answers.length;
-  const quizPct = Math.round((quizDone / total) * 100);
+  const quizPct = Math.round((answeredCount / totalQuestions) * 100);
 
   $app.innerHTML = `
     <div class="game-hud">
       <button class="hud-back" id="game-back">\u2190 BACK</button>
-      <span class="hud-portion">${esc(theme.name).toUpperCase()}</span>
-      <span class="hud-score">\u2B50 ${correctCount}/${quizDone}</span>
+      <span class="hud-portion">RUNDE ${state.currentRound + 1}/${STREAK_GOAL}</span>
+      <span class="hud-score">\u2B50 ${correctCount}/${answeredCount}</span>
     </div>
     <div class="hud-progress">
       <span>Quiz</span>
       <div class="hud-progress-bar"><div class="hud-progress-fill" style="width:${quizPct}%"></div></div>
-      <span class="hud-progress-text">${quizDone}/${total}</span>
+      <span class="hud-progress-text">${answeredCount}/${totalQuestions}</span>
     </div>
     <div class="direction-toggle">
       <button class="${state.direction === "de-en" ? "active" : ""}" data-dir="de-en">DE \u2192 EN</button>
@@ -577,7 +609,8 @@ function renderQuestionOverlay() {
   const existing = document.querySelector(".question-overlay");
   if (existing) existing.remove();
 
-  const word = state.quizWords[state.currentIndex];
+  const item = state.quizItems[state.currentIndex];
+  const word = item.word;
   const isDeEn = state.direction === "de-en";
   const prompt = isDeEn ? word.german : word.english;
   const dirLabel = isDeEn ? "Deutsch \u2192 English" : "English \u2192 Deutsch";
@@ -601,17 +634,17 @@ function renderQuestionOverlay() {
       feedbackHtml = `<div class="feedback wrong">Falsch!</div><div class="correct-answer-display">Richtig: <strong>${esc(correctDisplay)}</strong></div><div class="example-sentence">${esc(word.example)}</div>`;
       inputExtra = "wrong";
     }
-    const isLast = state.currentIndex >= state.quizWords.length - 1;
-    actionsHtml = `<div class="quiz-actions"><button class="btn btn-primary btn-block" id="q-next">${isLast ? "Ergebnis anzeigen" : "Weiter"}</button></div>`;
+    actionsHtml = `<div class="quiz-actions"><button class="btn btn-primary btn-block" id="q-next">Weiter</button></div>`;
   } else {
     actionsHtml = `<div class="quiz-actions"><button class="btn btn-primary btn-block" id="q-check">Pr\u00fcfen</button></div>`;
   }
 
+  const roundLabel = `Runde ${item.round + 1}/${STREAK_GOAL}`;
   const overlay = document.createElement("div");
   overlay.className = "question-overlay";
   overlay.innerHTML = `
     <div class="question-card">
-      <div class="direction-label">${esc(dirLabel)}</div>
+      <div class="direction-label">${esc(dirLabel)} \u2022 ${roundLabel}</div>
       <div class="streak-dots">${dots}</div>
       <div class="quiz-word">${esc(prompt)}</div>
       <div class="quiz-input-group">
@@ -636,14 +669,15 @@ function renderQuestionOverlay() {
 
 function submitAnswer(userInput) {
   if (state.answered) return;
-  const word = state.quizWords[state.currentIndex];
+  const item = state.quizItems[state.currentIndex];
+  const word = item.word;
   const isDeEn = state.direction === "de-en";
   const correctField = isDeEn ? word.english : word.german;
   const correct = checkUserAnswer(userInput, correctField);
   const termKey = word.english.toLowerCase();
 
   state.answered = true;
-  state.answers.push({ word, correct, userAnswer: userInput, correctAnswer: correctField });
+  state.answers.push({ word, correct, userAnswer: userInput, correctAnswer: correctField, round: item.round });
   state.nodeStates[state.currentIndex] = correct ? "correct" : "wrong";
   updateTermStreak(state.currentUser, state.selectedPortion, termKey, state.direction, correct);
 
@@ -652,9 +686,7 @@ function submitAnswer(userInput) {
   if (block) {
     block.className = `q-block ${correct ? "correct" : "wrong"}`;
     block.textContent = "";
-    // Re-add word label
-    const word2 = state.quizWords[state.currentIndex];
-    const label = isDeEn ? word2.german : word2.english;
+    const label = isDeEn ? word.german : word.english;
     const shortLabel = label.length > 14 ? label.slice(0, 12) + "\u2026" : label;
     const span = document.createElement("span");
     span.className = "q-block-word";
@@ -670,7 +702,6 @@ function submitAnswer(userInput) {
   if (charEl) {
     if (correct) {
       charEl.classList.add("jumping");
-      // Coin burst
       spawnCoinBurst(state.charPos + 17);
       setTimeout(() => charEl.classList.remove("jumping"), 500);
     } else {
@@ -696,19 +727,18 @@ function spawnCoinBurst(x) {
 }
 
 function updateHudProgress() {
-  const total = state.quizWords.length;
-  const quizDone = state.answers.length;
+  const totalQuestions = getQuestionCount();
+  const answeredCount = state.answers.length;
   const correctCount = state.answers.filter(a => a.correct).length;
-  const quizPct = Math.round((quizDone / total) * 100);
-  // Update progress bar
+  const quizPct = Math.round((answeredCount / totalQuestions) * 100);
   const fill = document.querySelector(".hud-progress-fill");
   if (fill) fill.style.width = quizPct + "%";
   const text = document.querySelector(".hud-progress-text");
-  if (text) text.textContent = `${quizDone}/${total}`;
-  // Update score
+  if (text) text.textContent = `${answeredCount}/${totalQuestions}`;
   const score = document.querySelector(".hud-score");
-  if (score) score.textContent = `\u2B50 ${correctCount}/${quizDone}`;
-  // Update bottom hint with overall progress
+  if (score) score.textContent = `\u2B50 ${correctCount}/${answeredCount}`;
+  const roundLabel = document.querySelector(".hud-portion");
+  if (roundLabel) roundLabel.textContent = `RUNDE ${state.currentRound + 1}/${STREAK_GOAL}`;
   const hint = document.querySelector(".game-hint");
   if (hint) {
     const progress = getPortionProgress(state.currentUser, state.selectedPortion, state.direction);
@@ -727,25 +757,78 @@ function advanceGame() {
   state.currentIndex++;
   state.answered = false;
 
-  if (state.currentIndex >= state.quizWords.length) {
-    // Done - save score
+  if (state.currentIndex >= state.quizItems.length) {
+    // All 3 rounds done - save score and show results
     const correctCount = state.answers.filter(a => a.correct).length;
     saveQuizScore(state.currentUser, state.selectedPortion, state.direction, correctCount, state.answers.length);
-
-    // Walk character to flag pole, then show results
-    const flagPos = getBlockX(state.quizWords.length - 1) + BLOCK_SPACING * 0.7 - 10;
+    const flagPos = getBlockX(state.quizItems.length - 1) + BLOCK_SPACING * 0.7 - 10;
     moveCharTo(flagPos);
     setTimeout(() => { state.screen = "results"; render(); }, 900);
     return;
   }
 
-  // Unlock next block and walk character there
-  state.nodeStates[state.currentIndex] = "current";
-  const nextX = getBlockX(state.currentIndex) - 10;
+  const nextItem = state.quizItems[state.currentIndex];
+
+  if (nextItem.type === "checkpoint") {
+    // Walk to checkpoint, show round summary
+    state.nodeStates[state.currentIndex] = "checkpoint-reached";
+    moveCharTo(getBlockX(state.currentIndex) - 10);
+    // Update checkpoint DOM
+    const cpEl = document.querySelector(`.checkpoint-marker[data-block="${state.currentIndex}"]`);
+    if (cpEl) cpEl.classList.add("reached");
+    state.currentRound++;
+    updateHudProgress();
+    setTimeout(() => showRoundSummary(nextItem.round), 700);
+    return;
+  }
+
+  // Regular question block
+  unlockAndWalkTo(state.currentIndex);
+}
+
+function showRoundSummary(finishedRound) {
+  const roundAnswers = state.answers.filter(a => a.round === finishedRound);
+  const roundCorrect = roundAnswers.filter(a => a.correct).length;
+  const roundTotal = roundAnswers.length;
+  const pct = Math.round((roundCorrect / roundTotal) * 100);
+  const starCount = pct >= 90 ? 3 : pct >= 60 ? 2 : pct >= 30 ? 1 : 0;
+  let stars = "";
+  for (let i = 0; i < 3; i++) stars += i < starCount ? "\u2B50" : "\u2606";
+
+  const progress = getPortionProgress(state.currentUser, state.selectedPortion, state.direction);
+
+  const overlay = document.createElement("div");
+  overlay.className = "question-overlay";
+  overlay.innerHTML = `
+    <div class="question-card" style="text-align:center">
+      <div class="round-summary-stars">${stars}</div>
+      <div class="round-summary-score">${roundCorrect}/${roundTotal}</div>
+      <div class="round-summary-label">Runde ${finishedRound + 1} geschafft!</div>
+      <div class="round-summary-label">${pct}% richtig</div>
+      <div class="round-summary-label" style="margin-top:8px">Gelernt: ${progress.learned}/${progress.total} Begriffe</div>
+      <div class="quiz-actions" style="margin-top:16px">
+        <button class="btn btn-primary btn-block" id="cp-continue">Weiter zu Runde ${finishedRound + 2} \u2192</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  document.getElementById("cp-continue").addEventListener("click", () => {
+    overlay.remove();
+    // Advance past checkpoint to next question
+    state.currentIndex++;
+    state.answered = false;
+    if (state.currentIndex < state.quizItems.length) {
+      unlockAndWalkTo(state.currentIndex);
+    }
+  });
+}
+
+function unlockAndWalkTo(index) {
+  state.nodeStates[index] = "current";
+  const nextX = getBlockX(index) - 10;
   moveCharTo(nextX);
 
-  // Update block classes without full re-render
-  const nextBlock = document.querySelector(`.q-block[data-block="${state.currentIndex}"]`);
+  const nextBlock = document.querySelector(`.q-block[data-block="${index}"]`);
   if (nextBlock) {
     nextBlock.className = "q-block current";
     nextBlock.addEventListener("click", () => {
@@ -767,14 +850,13 @@ function moveCharTo(targetX) {
     charEl.style.left = targetX + "px";
     setTimeout(() => charEl.classList.remove("walking"), 600);
   }
-  // Scroll viewport
   if (world) {
     const offset = getScrollOffset(targetX);
     world.style.transform = `translateX(${offset}px)`;
   }
 }
 
-/* ── Results ──────────────────────────────────────── */
+/* ── Results (per-term summary across 3 rounds) ──── */
 function renderResults() {
   const portion = VOCABULARY.portions[state.selectedPortion];
   const correctCount = state.answers.filter(a => a.correct).length;
@@ -786,14 +868,32 @@ function renderResults() {
 
   const { learned, total: portionTotal } = getPortionProgress(state.currentUser, state.selectedPortion, state.direction);
   const dirDisplay = state.direction === "de-en" ? "DE\u2192EN" : "EN\u2192DE";
+  const isDeEn = state.direction === "de-en";
 
-  const items = state.answers.map(a => {
-    const cls = a.correct ? "correct" : "wrong";
-    const icon = a.correct ? "\u2705" : "\u274C";
-    const isDeEn = state.direction === "de-en";
-    const shown = isDeEn ? a.word.german : a.word.english;
-    const answerDisplay = a.correct ? esc(a.userAnswer) : `<s>${esc(a.userAnswer || "\u2013")}</s> \u2192 ${esc(a.correctAnswer)}`;
-    return `<div class="result-item ${cls}"><span class="result-icon">${icon}</span><div class="result-content"><span class="result-word">${esc(shown)}</span><span class="result-answer">${answerDisplay}</span><span class="result-example">${esc(a.word.example)}</span></div></div>`;
+  // Group results by term across all rounds
+  const termMap = {};
+  for (const a of state.answers) {
+    const key = a.word.english;
+    if (!termMap[key]) termMap[key] = { word: a.word, rounds: [] };
+    termMap[key].rounds.push(a.correct);
+  }
+
+  const items = Object.values(termMap).map(tr => {
+    const termKey = tr.word.english.toLowerCase();
+    const streak = getTermStreak(state.currentUser, state.selectedPortion, termKey, state.direction);
+    const isLearned = streak >= STREAK_GOAL;
+    const shown = isDeEn ? tr.word.german : tr.word.english;
+    const roundDots = tr.rounds.map(r => r ? "\uD83D\uDFE2" : "\uD83D\uDD34").join(" ");
+    const statusLabel = isLearned ? "\u2705 Gelernt!" : `Streak: ${streak}/${STREAK_GOAL}`;
+    const cls = isLearned ? "correct" : "wrong";
+    return `<div class="result-item ${cls}">
+      <span class="result-icon">${isLearned ? "\uD83C\uDFC6" : "\uD83D\uDCDD"}</span>
+      <div class="result-content">
+        <span class="result-word">${esc(shown)}</span>
+        <span class="result-answer">${roundDots} &mdash; ${statusLabel}</span>
+        <span class="result-example">${esc(tr.word.example)}</span>
+      </div>
+    </div>`;
   }).join("");
 
   $app.innerHTML = `
@@ -801,7 +901,7 @@ function renderResults() {
     <div class="card results-card animate-pop">
       <div class="results-stars">${stars}</div>
       <div class="results-score">${correctCount}/${total}</div>
-      <div class="results-label">${pct}% richtig</div>
+      <div class="results-label">${pct}% richtig \u2022 3 Runden</div>
       <div class="results-label" style="margin-top:8px;font-size:0.9rem;color:var(--text-light)">${dirDisplay}: ${learned}/${portionTotal} Begriffe gelernt</div>
       <div class="results-list">${items}</div>
       <div class="results-actions">
